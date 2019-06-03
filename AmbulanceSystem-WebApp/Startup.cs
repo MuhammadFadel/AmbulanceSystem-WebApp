@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AmbulanceSystemWebApp.Services;
+using AmbulanceSystemWebApp.Services.Interfaces;
+using AmbulanceSystemWebApp.Services.ServicesClasses;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +34,11 @@ namespace AmbulanceSystem_WebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddScoped<IHttpClientService, HttpClientService>();
+            services.AddHttpClient("Api",
+                c => c.BaseAddress = new Uri(StaticBaseUrl.BaseUrl));
+            services.AddScoped<IRecieptionistService, RecieptionistService>();
+            services.AddScoped<IAccountService, AccountService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
