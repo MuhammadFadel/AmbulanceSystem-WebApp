@@ -6,13 +6,13 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using AmbulanceSystem.Resources;
+using AmbulanceSystem_WebApp.Services.Interfaces;
 
-using AmbulanceSystemWebApp.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 
-namespace AmbulanceSystemWebApp.Services.ServicesClasses
+namespace AmbulanceSystem_WebApp.Services.ServicesClasses
 {
     public class AccountService : IAccountService
     {

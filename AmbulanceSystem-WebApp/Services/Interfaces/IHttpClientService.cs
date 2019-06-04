@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AmbulanceSystemWebApp.Services.Interfaces
+namespace AmbulanceSystem_WebApp.Services.Interfaces
 {
     public interface IHttpClientService
     {

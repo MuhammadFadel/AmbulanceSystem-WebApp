@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmbulanceSystem.Resources;
 
-namespace AmbulanceSystemWebApp.Services.Interfaces
+namespace AmbulanceSystem_WebApp.Services.Interfaces
 {
     public interface IAccountService
     {
