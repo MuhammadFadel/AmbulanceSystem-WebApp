@@ -2,12 +2,32 @@
 <html>
 <head>
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="~/lib/assets/images/first-aid-1040283-1920-122x122.png" type="image/x-icon">
+    <meta name="description"
+          content="AMBULANCE SYSTEM MAINLY CREATED FOR MINISTRY OF HEALTH TO IMPROVE MEDICAL CARE.
+        This system created to help patient to request ambulance in easiest way,
+          helping the hospital to know that it should be prepared for patient and ambulance authority control online everything.
+          Also, helping the ministry of health to monitor whole processes and get final statistics and reports.
+          System will provide a lot of predictions results for improving Medical, Hospital and Ambulance service quality.">
+
     <title>@ViewData["Title"] - AmbulanceSystem_WebApp</title>
 
     <environment include="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
+        @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />*@
+
+        <link rel="stylesheet" href="~/lib/assets/web//assets/mobirise-icons-bold/mobirise-icons-bold.css">
+        <link rel="stylesheet" href="~/lib/assets/web/assets/mobirise-icons/mobirise-icons.css">
+        <link rel="stylesheet" href="~/lib/assets/tether/tether.min.css">
+        <link rel="stylesheet" href="~/lib/assets/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="~/lib/assets/bootstrap/css/bootstrap-grid.min.css">
+        <link rel="stylesheet" href="~/lib/assets/bootstrap/css/bootstrap-reboot.min.css">
+        <link rel="stylesheet" href="~/lib/assets/animatecss/animate.min.css">
+        <link rel="stylesheet" href="~/lib/assets/dropdown/css/style.css">
+        <link rel="stylesheet" href="~/lib/assets/theme/css/style.css">
+        <link rel="stylesheet" href="~/lib/assets/mobirise/css/mbr-additional.css" type="text/css">
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
@@ -17,41 +37,47 @@
     </environment>
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">AmbulanceSystem_WebApp</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+
+    <partial name="_Navbar" />
 
     <partial name="_CookieConsentPartial" />
 
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2019 - AmbulanceSystem_WebApp</p>
-        </footer>
-    </div>
+
+    @RenderBody()
+
+
+    <section once="footers" class="cid-rspbodmIiI" id="footer6-i">
+
+        <div class="container">
+            <div class="media-container-row align-center mbr-white">
+                <div class="col-12">
+                    <p class="mbr-text mb-0 mbr-fonts-style display-7">
+                        © Copyright 2019 Ambulance System - All Rights Reserved
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
+        @*<script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>*@
+
+
+        <script src="~/lib/assets/web/assets/jquery/jquery.min.js"></script>
+        <script src="~/lib/assets/tether/tether.min.js"></script>
+        <script src="~/lib/assets/popper/popper.min.js"></script>
+        <script src="~/lib/assets/bootstrap/js/bootstrap.min.js"></script>
+        <script src="~/lib/assets/parallax/jarallax.min.js"></script>
+        <script src="~/lib/assets/viewportchecker/jquery.viewportchecker.js"></script>
+        <script src="~/lib/assets/smoothscroll/smooth-scroll.js"></script>
+        <script src="~/lib/assets/bootstrapcarouselswipe/bootstrap-carousel-swipe.js"></script>
+        <script src="~/lib/assets/mbr-clients-slider/mbr-clients-slider.js"></script>
+        <script src="~/lib/assets/dropdown/js/script.min.js"></script>
+        <script src="~/lib/assets/touchswipe/jquery.touch-swipe.min.js"></script>
+        <script src="~/lib/assets/theme/js/script.js"></script>
+
     </environment>
     <environment exclude="Development">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
@@ -70,5 +96,13 @@
     </environment>
 
     @RenderSection("Scripts", required: false)
+
+    <div id="scrollToTop" class="scrollToTop mbr-arrow-up">
+        <a style="text-align: center;">
+            <i class="mbr-arrow-up-icon mbr-arrow-up-icon-cm cm-icon cm-icon-smallarrow-up"></i>
+        </a>
+    </div>
+    <input name="animation" type="hidden">
+
 </body>
 </html>
