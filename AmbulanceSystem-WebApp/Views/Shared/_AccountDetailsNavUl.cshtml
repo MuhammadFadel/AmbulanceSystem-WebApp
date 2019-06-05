@@ -1,0 +1,29 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@if (ViewData["UserEmail"] != null)
+{        
+    <li class="nav-item">
+        <a class="nav-link link text-white display-4" asp-controller="Account" asp-action="Logout">
+            <span class="mbrib-logout mbr-iconfont mbr-iconfont-btn"></span>
+            @ViewData["UserEmail"]
+        </a></li>
+    <li class="nav-item">
+        <a class="nav-link link text-white display-4"asp-controller="Account" asp-action="Logout">
+            <span class="mbrib-logout mbr-iconfont mbr-iconfont-btn"></span>
+            lOGOUT
+        </a>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link link text-white display-4" href="login.html">
+            <span class="mbrib-login mbr-iconfont mbr-iconfont-btn"></span>
+            lOGIN
+        </a>
+    </li>
+}
+
+
