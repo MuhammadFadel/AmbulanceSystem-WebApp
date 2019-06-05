@@ -5,14 +5,14 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using AmbulanceSystem.Resources;
+using AmbulanceSystem_WebApp.Resources;
 using AmbulanceSystem_WebApp.Services.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 
-namespace AmbulanceSystem_WebApp.Services.ServicesClasses
+namespace AmbulanceSystem_WebApp.Services.Core
 {
     public class AccountService : IAccountService
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 
-namespace Ambulance.Model
+namespace AmbulanceSystem_WebApp.Model
 {
     public class ResponseForRequestCreation
     {

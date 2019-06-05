@@ -9,7 +9,7 @@ using AmbulanceSystem_WebApp.Services.Interfaces;
 
 using Newtonsoft.Json;
 
-namespace AmbulanceSystemWebApp.Services.ServicesClasses
+namespace AmbulanceSystem_WebApp.Services.Core
 {
     public class HttpClientService : IHttpClientService
 

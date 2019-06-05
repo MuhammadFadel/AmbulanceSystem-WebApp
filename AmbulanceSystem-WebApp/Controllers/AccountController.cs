@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AmbulanceSystem.Resources;
 
+using AmbulanceSystem_WebApp.Resources;
 using AmbulanceSystem_WebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,11 +18,12 @@ namespace AmbulanceSystemWebApp.Controllers
         //}
         private readonly IAccountService _accountService;
         private readonly IRecieptionistService _recieptionistService;
-        public AccountController(IAccountService accountService,IRecieptionistService recieptionistService)
+        private readonly IAuthorityService _authorityService;
+        public AccountController(IAccountService accountService,IRecieptionistService recieptionistService, IAuthorityService authorityService)
         {
             _accountService = accountService;
             _recieptionistService = recieptionistService;
-
+            _authorityService = authorityService;
         }
         [HttpPost]
         public async Task<IActionResult> Login([FromBody]LoginInfoResources loginInfoResources)
@@ -33,15 +34,17 @@ namespace AmbulanceSystemWebApp.Controllers
                 return BadRequest();
             if (userInfo.RoleName.Equals("Recieptionist"))
             {
-                var RecieptionistData = await _recieptionistService.GetRecieptionistFullData(userInfo.Id);
-                return Ok(RecieptionistData);
+                var recieptionistData = await _recieptionistService.GetRecieptionistFullData(userInfo.Id);
+                TempData["RecieptionistData"] = recieptionistData;
+                TempData.Keep();
+                return Ok(recieptionistData);
             }
 
 
             if (userInfo.RoleName.Equals("Authority"))
             {
-                //var AuthorityData= 
-                //return View();
+                var authorityData = await _authorityService.AuthorityFullData(userInfo.Id);
+                return Ok(authorityData);
             }
 
             return Ok(userInfo);
