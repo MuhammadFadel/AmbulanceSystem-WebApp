@@ -8,25 +8,25 @@ using Newtonsoft.Json;
 
 namespace AmbulanceSystem_WebApp.Services.Core
 {
-    public class RecieptionistService : IRecieptionistService
+    public class AuthorityService : IAuthorityService
     {
         private readonly IHttpClientService _httpClientService;
 
-        public RecieptionistService(IHttpClientService httpClientService)
+        public AuthorityService(IHttpClientService httpClientService)
         {
             _httpClientService = httpClientService;
         }
-        public async Task<RecieptionistFullData> GetRecieptionistFullData(Guid userId)
+        public async Task<AuthorityEmployeeFullData> AuthorityFullData(Guid userId)
         {
-            var responseMessage = await 
-                _httpClientService.SendHttpGetRequest(userId.ToString(), "Recieptionist/GetRecieptionistByUserId/");
+            var responseMessage = await
+                _httpClientService.SendHttpGetRequest(userId.ToString(), "Authority/GetEmployeeByUserId/");
             if (string.IsNullOrEmpty(responseMessage))
             {
                 return null;
             }
 
-            var RecieptionistData = JsonConvert.DeserializeObject<RecieptionistFullData>(responseMessage);
-            return RecieptionistData;
+            var authorityFullData = JsonConvert.DeserializeObject<AuthorityEmployeeFullData>(responseMessage);
+            return authorityFullData;
         }
     }
 }

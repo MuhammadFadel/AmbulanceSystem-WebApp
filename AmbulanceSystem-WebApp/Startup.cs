@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AmbulanceSystemWebApp.Services;
-using AmbulanceSystemWebApp.Services.ServicesClasses;
+using AmbulanceSystem_WebApp.Services;
+
+using AmbulanceSystem_WebApp.Services.Core;
 using AmbulanceSystem_WebApp.Services.Interfaces;
-using AmbulanceSystem_WebApp.Services.ServicesClasses;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -40,7 +41,7 @@ namespace AmbulanceSystem_WebApp
                 c => c.BaseAddress = new Uri(StaticBaseUrl.BaseUrl));
             services.AddScoped<IRecieptionistService, RecieptionistService>();
             services.AddScoped<IAccountService, AccountService>();
-
+            services.AddScoped<IAuthorityService, AuthorityService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

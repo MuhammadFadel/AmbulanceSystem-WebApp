@@ -7,8 +7,8 @@ using AmbulanceSystem_WebApp.Resources;
 
 namespace AmbulanceSystem_WebApp.Services.Interfaces
 {
-    public interface IAccountService
+    public interface IAuthorityService
     {
-         Task<UserLoginReturn> Login(LoginInfoResources loginInfoResources);
+        Task<AuthorityEmployeeFullData> AuthorityFullData(Guid userId);
     }
 }

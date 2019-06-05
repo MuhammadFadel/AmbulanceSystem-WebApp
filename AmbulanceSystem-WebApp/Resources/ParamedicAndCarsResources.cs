@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AmbulanceSystem_WebApp.Resources;
 
-namespace AmbulanceSystem.Resources
+namespace AmbulanceSystem_WebApp.Resources
 {
     public class ParamedicAndCarsResources
     {
