@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using AmbulanceSystem_WebApp.Resources;
 using AmbulanceSystem_WebApp.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmbulanceSystemWebApp.Controllers
@@ -19,36 +20,65 @@ namespace AmbulanceSystemWebApp.Controllers
         private readonly IAccountService _accountService;
         private readonly IRecieptionistService _recieptionistService;
         private readonly IAuthorityService _authorityService;
-        public AccountController(IAccountService accountService,IRecieptionistService recieptionistService, IAuthorityService authorityService)
+        public AccountController(IAccountService accountService, IRecieptionistService recieptionistService, IAuthorityService authorityService)
         {
             _accountService = accountService;
             _recieptionistService = recieptionistService;
             _authorityService = authorityService;
         }
-        [HttpPost]
-        public async Task<IActionResult> Login([FromBody]LoginInfoResources loginInfoResources)
+
+
+
+        public IActionResult Login()
         {
-            var userInfo = await _accountService.Login(loginInfoResources);
+            return View();
+        }
 
-            if (userInfo == null)
-                return BadRequest();
-            if (userInfo.RoleName.Equals("Recieptionist"))
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginInfoResources loginInfoResources)
+        {
+            if (!ModelState.IsValid)
             {
-                var recieptionistData = await _recieptionistService.GetRecieptionistFullData(userInfo.Id);
-                TempData["RecieptionistData"] = recieptionistData;
-                TempData.Keep();
-                return Ok(recieptionistData);
+                return View(loginInfoResources);
             }
-
-
-            if (userInfo.RoleName.Equals("Authority"))
+            else
             {
-                var authorityData = await _authorityService.AuthorityFullData(userInfo.Id);
-                return Ok(authorityData);
-            }
+                var userInfo = await _accountService.Login(loginInfoResources);
 
-            return Ok(userInfo);
+                if (userInfo == null)
+                {
+                    ViewBag.userFounded = false;
+                    ViewBag.userAuthorized = false;
+                    return View();
+                }                    
 
+                if (userInfo.RoleName.Equals("Hospital"))
+                {
+                    var recieptionistData = await _recieptionistService.GetRecieptionistFullData(userInfo.Id);
+                    TempData["RecieptionistData"] = recieptionistData;
+                    TempData.Keep();
+
+                    HttpContext.Session.SetString("userEmail", userInfo.Email);
+                    HttpContext.Session.SetString("userId", userInfo.Id.ToString());
+                    return RedirectToAction("Index", "Home");
+                }
+                else if (userInfo.RoleName.Equals("Authority"))
+                {
+                    var authorityData = await _authorityService.AuthorityFullData(userInfo.Id);
+
+                    HttpContext.Session.SetString("userEmail", userInfo.Email);
+                    HttpContext.Session.SetString("userId", userInfo.Id.ToString());
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ViewBag.userFounded = true;
+                    ViewBag.userAuthorized = false;
+                    return View();
+                }
+                
+            }                                        
         }
     }
 }

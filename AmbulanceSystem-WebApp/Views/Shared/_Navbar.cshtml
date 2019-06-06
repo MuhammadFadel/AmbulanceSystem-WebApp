@@ -21,21 +21,21 @@
         <div class="menu-logo">
             <div class="navbar-brand">
                 <span class="navbar-logo">
-                    <a href="index.html">
+                    <a asp-controller="Home" asp-action="Index">
                         <img src="~/lib/assets/images/first-aid-1040283-1920-122x122.png" alt="Ambulance System"
                              title="Ambulance System FCIH GP" style="height: 3.8rem;">
                     </a>
                 </span>
                 <span class="navbar-caption-wrap">
                     <a class="navbar-caption text-white display-4"
-                       href="index.html">Ambulance System</a>
+                      asp-controller="Home" asp-action="Index">Ambulance System</a>
                 </span>
             </div>
         </div>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav nav-dropdown nav-right" data-app-modern-menu="true">
                 <li class="nav-item">
-                    <a class="nav-link link text-white display-4" href="index.html">
+                    <a class="nav-link link text-white display-4" asp-controller="Home" asp-action="Index">
                         <span class="mbri-home mbr-iconfont mbr-iconfont-btn"></span>
                         Home
                     </a>

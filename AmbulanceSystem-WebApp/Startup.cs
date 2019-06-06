@@ -28,13 +28,22 @@ namespace AmbulanceSystem_WebApp
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+        {            
+            
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+
+            //services.Configure<CookiePolicyOptions>(options =>
+            //{
+
+
+            //    This lambda determines whether user consent for non - essential cookies is needed for a given request.
+            //     options.CheckConsentNeeded = context => true;
+            //     options.MinimumSameSitePolicy = SameSiteMode.None;
+            //});
+
 
             services.AddScoped<IHttpClientService, HttpClientService>();
             services.AddHttpClient("Api",
@@ -42,7 +51,8 @@ namespace AmbulanceSystem_WebApp
             services.AddScoped<IRecieptionistService, RecieptionistService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAuthorityService, AuthorityService>();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,6 +70,7 @@ namespace AmbulanceSystem_WebApp
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseSession();
             app.UseCookiePolicy();
 
             app.UseMvc(routes =>

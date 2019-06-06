@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AmbulanceSystem_WebApp.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace AmbulanceSystem_WebApp.Controllers
 {
@@ -12,22 +13,12 @@ namespace AmbulanceSystem_WebApp.Controllers
     {
         public IActionResult Index()
         {
+            if (HttpContext.Session.IsAvailable)
+            {
+                ViewBag.userEmail = HttpContext.Session.GetString("userEmail");
+            }
             return View();
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
+        }        
 
         public IActionResult Privacy()
         {

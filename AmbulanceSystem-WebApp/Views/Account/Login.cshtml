@@ -1,34 +1,44 @@
 ﻿@model AmbulanceSystem_WebApp.Resources.LoginInfoResources
 
 @{
-    ViewData["Title"] = "Login";    
+    ViewData["Title"] = "Login";
 }
 
-<h2>Login Page</h2>
-<hr />
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Login">
+
+<div class="d-flex" style="min-height:690px">
+    <div class="m-auto w-50 pt-5">
+
+        @if (ViewBag.userFounded == false)
+        {
+            <div class="alert alert-danger">
+                <strong>Sorry!</strong> This User Is Not Founded or Maybe there invalid User Data
+            </div>
+        }
+        else if (ViewBag.userFounded == true && ViewBag.userAuthorized == false)
+        {
+            <div class="alert alert-danger">
+                <strong>Sorry!</strong> This User Is Not Allowed
+            </div>
+        }
+
+        <form asp-controller="Account" asp-action="Login" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="email" class="control-label"></label>
-                <input asp-for="email" class="form-control" />
-                <span asp-validation-for="email" class="text-danger"></span>
+            <div class="form-group font-weight-bold">
+                <label for="Email">Name:</label>
+                <input type="text" class="form-control" id="Email" asp-for="Email">
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="password" class="control-label"></label>
-                <input asp-for="password" class="form-control" />
-                <span asp-validation-for="password" class="text-danger"></span>
+            <div class="form-group font-weight-bold">
+                <label for="Password">Password:</label>
+                <input type="Password" class="form-control" id="Password" asp-for="Password">
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
+            <button type="submit" value="Login" class="btn btn-primary mx-auto">Login</button>
+            <a class="btn btn-warning mx-auto" asp-action="ForgetPassword">Forget Password</a>
         </form>
     </div>
 </div>
-
 <div>
     <a asp-action="Index">Back To Home</a>
 </div>
-
