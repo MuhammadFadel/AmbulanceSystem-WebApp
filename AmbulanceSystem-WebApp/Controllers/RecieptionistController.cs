@@ -106,7 +106,7 @@ namespace AmbulanceSystem_WebApp.Controllers
             {
                 var responseMessage = await _httpClientService
                     .SendHttpGetRequest(hospitalId.ToString(), "recieptionist/getAllPatientsForHospital/");
-                var patients = JsonConvert.DeserializeObject<IEnumerable<PatientProfileResources>>(responseMessage);
+                var patients = JsonConvert.DeserializeObject<IEnumerable<PatientFullData>>(responseMessage);
                 return Ok(patients);
             }
             catch (Exception e)
@@ -114,6 +114,8 @@ namespace AmbulanceSystem_WebApp.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+      
 
     }
 
