@@ -14,14 +14,26 @@ namespace AmbulanceSystem_WebApp.Controllers
     public class RecieptionistController : Controller
     {
         private readonly IHttpClientService _httpClientService;
-        
 
+
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
+         
         public RecieptionistController(IHttpClientService httpClientService)
         {
             _httpClientService = httpClientService;
         }
+        
+
+
+        public IActionResult CreateReport()
+        {
+            return View();
+        }
         [HttpPost]
-        public async Task<IActionResult> CreateReport([FromBody] ReportCreationResources reportCreationResources)
+        public async Task<IActionResult> CreateReport(ReportCreationResources reportCreationResources)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -42,6 +54,7 @@ namespace AmbulanceSystem_WebApp.Controllers
 
 
         }
+
         [HttpPost]
         public async Task<IActionResult> UpdateReport([FromBody] ReportResources reportResources)
         {
@@ -59,6 +72,7 @@ namespace AmbulanceSystem_WebApp.Controllers
                 return BadRequest(e.Message);
             }
         }
+
         [HttpGet("{reportId}")]
         public async Task<IActionResult> GetReport([FromRoute] Guid reportId)
         {

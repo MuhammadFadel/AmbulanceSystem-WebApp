@@ -61,6 +61,7 @@ namespace AmbulanceSystemWebApp.Controllers
 
                     HttpContext.Session.SetString("userEmail", userInfo.Email);
                     HttpContext.Session.SetString("userId", userInfo.Id.ToString());
+                    HttpContext.Session.SetString("userRole", userInfo.RoleName);
                     return RedirectToAction("Index", "Home");
                 }
                 else if (userInfo.RoleName.Equals("Authority"))
@@ -69,6 +70,7 @@ namespace AmbulanceSystemWebApp.Controllers
 
                     HttpContext.Session.SetString("userEmail", userInfo.Email);
                     HttpContext.Session.SetString("userId", userInfo.Id.ToString());
+                    HttpContext.Session.SetString("userRole", userInfo.RoleName);
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -79,6 +81,26 @@ namespace AmbulanceSystemWebApp.Controllers
                 }
                 
             }                                        
+        }
+
+        public IActionResult Dashboard()
+        {
+            var userRole = HttpContext.Session.GetString("userRole");
+            if (userRole == null)            
+                return RedirectToAction("Index", "Home");            
+            else if (userRole == "Hospital")
+                return RedirectToAction("Dashboard", "Recieptionist");
+            else if (userRole == "Authority")
+                return RedirectToAction("Dashboard", "Authority");
+
+            //Else Will Go To Home
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
         }
     }
 }
