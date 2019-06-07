@@ -7,23 +7,27 @@ using AmbulanceSystem_WebApp.Resources;
 using AmbulanceSystem_WebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using AmbulanceSystem_WebApp.ViewModels;
 
 namespace AmbulanceSystem_WebApp.Controllers
 {
     [Route("[Controller]/[Action]")]
     public class RecieptionistController : Controller
     {
-        private readonly IHttpClientService _httpClientService;
-
-
-        public IActionResult Dashboard()
+        
+        private readonly IPatientService _patientService;
+        private readonly IHospitalService _hospitalService;
+        private readonly IReportService _reportService;
+        public RecieptionistController(IHttpClientService httpClientService,
+            IPatientService patientService,
+            IHospitalService hospitalService,
+            IReportService reportService
+            )
         {
-            return View();
-        }
-         
-        public RecieptionistController(IHttpClientService httpClientService)
-        {
-            _httpClientService = httpClientService;
+            
+            _patientService = patientService;
+            _hospitalService = hospitalService;
+            _reportService = reportService;
         }
         
 
@@ -40,10 +44,7 @@ namespace AmbulanceSystem_WebApp.Controllers
 
             try
             {
-                var responseMessage = await
-                    _httpClientService.SendHttpPostRequest(reportCreationResources, "report/createreport");
-                var report = JsonConvert.DeserializeObject<ReportTuble>(responseMessage);
-
+                var report =await _reportService.CreateReport(reportCreationResources);
                 return Ok(report);
             }
             catch (Exception e)
@@ -63,9 +64,9 @@ namespace AmbulanceSystem_WebApp.Controllers
 
             try
             {
-                var responseMessage = await _httpClientService.SendHttpPostRequest(reportResources, "report/updatereport");
-                var report = JsonConvert.DeserializeObject<ReportTuble>(responseMessage);
+                var report =await _reportService.UpdateReport(reportResources);
                 return Ok(report);
+
             }
             catch (Exception e)
             {
@@ -81,8 +82,7 @@ namespace AmbulanceSystem_WebApp.Controllers
 
             try
             {
-                var responseMessage = await _httpClientService.SendHttpGetRequest(reportId.ToString(), "report/getreport/");
-                var report = JsonConvert.DeserializeObject<ReportTuble>(responseMessage);
+                var report =await _reportService.GetReport(reportId);
                 return Ok(report);
             }
             catch (Exception e)
@@ -91,17 +91,30 @@ namespace AmbulanceSystem_WebApp.Controllers
             }
 
         }
-
         [HttpGet("{patientId}")]
-        public async Task<IActionResult> GetPatientData(Guid patientId)
+        public async Task<IActionResult> GetPatientFullData([FromRoute] Guid patientId)
+        {
+            if (patientId == Guid.Empty)
+                return BadRequest(null);
+            try
+            {
+                var patient =await _patientService.GetPatientFullData(patientId);
+                return Ok(patient);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        [HttpGet("{patientId}")]
+        public async Task<IActionResult> GetPatientReports(Guid patientId)
         {
             if (patientId == Guid.Empty)
                 return BadRequest();
 
             try
             {
-                var responseMessage = await _httpClientService.SendHttpGetRequest(patientId.ToString(), "report/getpatientreport/");
-                var reports = JsonConvert.DeserializeObject<IEnumerable<ReportTuble>>(responseMessage);
+                var reports =await _reportService.GetPatientReports(patientId);
                 return Ok(reports);
             }
             catch (Exception e)
@@ -118,9 +131,7 @@ namespace AmbulanceSystem_WebApp.Controllers
 
             try
             {
-                var responseMessage = await _httpClientService
-                    .SendHttpGetRequest(hospitalId.ToString(), "recieptionist/getAllPatientsForHospital/");
-                var patients = JsonConvert.DeserializeObject<IEnumerable<PatientProfileResources>>(responseMessage);
+                var patients =await _patientService.GetPatientsForHospital(hospitalId);
                 return Ok(patients);
             }
             catch (Exception e)
@@ -128,6 +139,35 @@ namespace AmbulanceSystem_WebApp.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpGet("{hospitalId}")]
+        public async Task<IActionResult> GetHospitalStatistics([FromRoute] Guid hospitalId)
+        {
+            if (hospitalId == Guid.Empty)
+                return BadRequest();
+            try
+            {
+                var bedResource = await _hospitalService.GetAllBedsForHospital(hospitalId);
+                var patients = await _patientService.GetPatientsForHospital(hospitalId);
+                HospitalStatisticsViewModel hospitalStatistics= new HospitalStatisticsViewModel()
+                {
+                    AvailableBedsCount = bedResource.AvailableBeds.Count,
+                    UmAvailableBedsCount = bedResource.UnAvailableBeds.Count,
+                    PatientsCount = patients.Count()
+
+                };
+                return Ok(hospitalStatistics);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            
+            
+
+
+        }
+      
 
     }
 

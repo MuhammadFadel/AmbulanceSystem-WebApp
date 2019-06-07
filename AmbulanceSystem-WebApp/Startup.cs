@@ -51,6 +51,11 @@ namespace AmbulanceSystem_WebApp
             services.AddScoped<IRecieptionistService, RecieptionistService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAuthorityService, AuthorityService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IPatientService,PatientService>();
+            services.AddScoped<IParamedicService, ParamedicService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IHospitalService, HospitalService>();
 
 
         }
