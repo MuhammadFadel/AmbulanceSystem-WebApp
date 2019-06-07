@@ -16,7 +16,7 @@ namespace AmbulanceSystem_WebApp.Models
         [Required(ErrorMessage = "Patient Id is Required")]
         public Guid PatientId { get; set; }
 
-        public IEnumerable<PatientFullData> PatientsList { get; set; }
+        public List<CreateReportPatientList> PatientsList { get; set; }
 
         [Required(ErrorMessage = "Disease Name is Required")]
         public string DiseaseName { get; set; }
@@ -26,6 +26,16 @@ namespace AmbulanceSystem_WebApp.Models
 
         [Required(ErrorMessage = "Chronic Disease status is Required")]
         public bool IsChronicDisease { get; set; }
+
+        public CreateReportViewModel()
+        {
+            PatientsList = new List<CreateReportPatientList>();
+        }
     }
-    
+
+    public class CreateReportPatientList
+    {
+        public Guid Id { get; set; }
+        public string Username { get; set; }
+    }
 }

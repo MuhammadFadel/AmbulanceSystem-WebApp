@@ -1,31 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using AmbulanceSystem_WebApp.Resources;
 using AmbulanceSystem_WebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using AmbulanceSystem_WebApp.ViewModels;
 using AmbulanceSystem_WebApp.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace AmbulanceSystem_WebApp.Controllers
 {
     [Route("[Controller]/[Action]")]
+    [AmbulanceSystemWebApp.Controllers.AuthorizedUser]
     public class RecieptionistController : Controller
     {
+        //To Controll Session Data
+        private readonly ISession _session;
 
         private readonly IPatientService _patientService;
         private readonly IHospitalService _hospitalService;
         private readonly IReportService _reportService;
         public RecieptionistController(
+            IHttpContextAccessor httpContextAccessor,
             IPatientService patientService,
             IHospitalService hospitalService,
             IReportService reportService
             )
         {
+            _session = httpContextAccessor.HttpContext.Session;
             _patientService = patientService;
             _hospitalService = hospitalService;
             _reportService = reportService;
@@ -40,8 +43,10 @@ namespace AmbulanceSystem_WebApp.Controllers
 
         public async Task<IActionResult> CreateReport()
         {
-            var hospitalId = Guid.Parse(HttpContext.Session.GetString("userId"));
-            var roleName = HttpContext.Session.GetString("userRole");
+            var userId = Guid.Parse(_session.GetString(SessionSettings.UserId));
+            var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
+            var hospitalId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Hospital));
+
             if (hospitalId != null && roleName == "Hospital")
             {
                 try
@@ -49,9 +54,17 @@ namespace AmbulanceSystem_WebApp.Controllers
                     var patients = await _patientService.GetPatientsForHospital(hospitalId);
                     var createReportModel = new CreateReportViewModel
                     {
-                        HospitalId = hospitalId,
-                        PatientsList = patients
+                        HospitalId = hospitalId
                     };
+                    foreach (var patient in patients)
+                    {
+                        createReportModel.PatientsList.Add(new CreateReportPatientList
+                        {
+                            Id = patient.Id,
+                            Username = patient.User.Username
+                        });
+                    }
+
                     return View(createReportModel);
                 }
                 catch
@@ -65,15 +78,25 @@ namespace AmbulanceSystem_WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateReport(ReportCreationResources reportCreationResources)
+        public async Task<IActionResult> CreateReport(CreateReportViewModel createReportViewModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+                return View(createReportViewModel);
 
             try
             {
-                var report = await _reportService.CreateReport(reportCreationResources);
-                return Ok(report);
+                ReportCreationResources reportCreationResources = new ReportCreationResources
+                {
+                    HospitalId = createReportViewModel.HospitalId,
+                    Description = createReportViewModel.Description,
+                    DiseaseName = createReportViewModel.DiseaseName,
+                    IsChronicDisease = createReportViewModel.IsChronicDisease,
+                    PatientId = createReportViewModel.PatientId
+                };
+
+                await _reportService.CreateReport(reportCreationResources);
+                _session.SetString("ReportSaved", "true");
+                return RedirectToAction("CreateReport");
             }
             catch (Exception e)
             {
@@ -149,6 +172,50 @@ namespace AmbulanceSystem_WebApp.Controllers
             {
                 return BadRequest(e.Message);
             }
+        }
+
+
+        public async Task<IActionResult> ViewPatients()
+        {
+            var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
+            var hospitalId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Hospital));
+
+            if (hospitalId != null && roleName == "Hospital")
+            {
+                try
+                {
+                    var patients = await _patientService.GetPatientsForHospital(hospitalId);
+                    return View(patients);
+                }
+                catch
+                {
+                    ViewBag.ErrorLoadingPatients = true;
+                    return View();
+                }
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [Route("{patientId}")]
+        public async Task<IActionResult> ViewPatient([FromRoute] Guid patientId)
+        {            
+            var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
+            var hospitalId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Hospital));
+
+            if (hospitalId != null && roleName == "Hospital")
+            {
+                try
+                {
+                    var patient = await _patientService.GetPatientFullData(patientId);
+                    return View(patient);
+                }
+                catch
+                {
+                    ViewBag.ErrorLoadingPatients = true;
+                    return View();
+                }
+            }
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet("{hospitalId}")]

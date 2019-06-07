@@ -9,11 +9,7 @@ namespace AmbulanceSystem_WebApp.Resources
     {
         public Guid Id { get; set; }
 
-        
-        
-       
         public UserData User { get; set; }
-
         
         public DateTime Birthdate { get; set; }
 

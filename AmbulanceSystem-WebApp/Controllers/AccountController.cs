@@ -1,27 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
-
+using AmbulanceSystem_WebApp.Models;
 using AmbulanceSystem_WebApp.Resources;
 using AmbulanceSystem_WebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Session;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
+using Newtonsoft.Json;
 
 namespace AmbulanceSystemWebApp.Controllers
 {
-    [Route("[controller]/[Action]")]
+    [Route("[controller]/[Action]")]    
     public class AccountController : Controller
     {
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
+        private readonly string UserId = SessionSettings.UserId ;       
+        private readonly string Email = SessionSettings.Email;
+        private readonly string RoleName = SessionSettings.RoleName;
+        private readonly string Hospital = SessionSettings.Hospital;
+        private readonly string Authority = SessionSettings.Authority;
+
+        private readonly ISession _session;
+
         private readonly IAccountService _accountService;
         private readonly IRecieptionistService _recieptionistService;
         private readonly IAuthorityService _authorityService;
-        public AccountController(IAccountService accountService, IRecieptionistService recieptionistService, IAuthorityService authorityService)
+        public AccountController(IHttpContextAccessor httpContextAccessor,
+                                IAccountService accountService,
+                                IRecieptionistService recieptionistService,
+                                IAuthorityService authorityService)
         {
+            _session = httpContextAccessor.HttpContext.Session;
             _accountService = accountService;
             _recieptionistService = recieptionistService;
             _authorityService = authorityService;
@@ -31,7 +44,10 @@ namespace AmbulanceSystemWebApp.Controllers
 
         public IActionResult Login()
         {
-            return View();
+            if (_session.GetString(UserId) == null)
+                return View();
+            else
+                return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
@@ -51,26 +67,39 @@ namespace AmbulanceSystemWebApp.Controllers
                     ViewBag.userFounded = false;
                     ViewBag.userAuthorized = false;
                     return View();
-                }                    
+                }
 
                 if (userInfo.RoleName.Equals("Hospital"))
                 {
                     var recieptionistData = await _recieptionistService.GetRecieptionistFullData(userInfo.Id);
-                    TempData["RecieptionistData"] = recieptionistData;
+                    TempData["RecieptionistData"] = JsonConvert.SerializeObject(recieptionistData);
                     TempData.Keep();
 
-                    HttpContext.Session.SetString("userEmail", userInfo.Email);
-                    HttpContext.Session.SetString("userId", userInfo.Id.ToString());
-                    HttpContext.Session.SetString("userRole", userInfo.RoleName);
+                    _session.SetString(Email, userInfo.Email);
+                    _session.SetString(UserId, userInfo.Id.ToString());
+                    _session.SetString(RoleName, userInfo.RoleName);
+                    _session.SetString(Hospital, recieptionistData.HospitalData.HospitalData.Id.ToString());
+
+                    User.AddIdentity(new System.Security.Claims.ClaimsIdentity
+                    {
+                        Label = _session.GetString(Email)
+                    });
+
+
+
+                    ViewBag.userEmail = userInfo.Email;
                     return RedirectToAction("Index", "Home");
                 }
                 else if (userInfo.RoleName.Equals("Authority"))
                 {
                     var authorityData = await _authorityService.AuthorityFullData(userInfo.Id);
 
-                    HttpContext.Session.SetString("userEmail", userInfo.Email);
-                    HttpContext.Session.SetString("userId", userInfo.Id.ToString());
-                    HttpContext.Session.SetString("userRole", userInfo.RoleName);
+                    _session.SetString(Email, userInfo.Email);
+                    _session.SetString(UserId, userInfo.Id.ToString());
+                    _session.SetString(RoleName, userInfo.RoleName);
+                    _session.SetString(Authority, authorityData.AuthorityFullData.Id.ToString());
+
+                    ViewBag.userEmail = userInfo.Email;
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -79,15 +108,15 @@ namespace AmbulanceSystemWebApp.Controllers
                     ViewBag.userAuthorized = false;
                     return View();
                 }
-                
-            }                                        
+
+            }
         }
 
         public IActionResult Dashboard()
         {
-            var userRole = HttpContext.Session.GetString("userRole");
-            if (userRole == null)            
-                return RedirectToAction("Index", "Home");            
+            var userRole = HttpContext.Session.GetString(RoleName);
+            if (userRole == null)
+                return RedirectToAction("Index", "Home");
             else if (userRole == "Hospital")
                 return RedirectToAction("Dashboard", "Recieptionist");
             else if (userRole == "Authority")
@@ -99,8 +128,27 @@ namespace AmbulanceSystemWebApp.Controllers
 
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear();
+            _session.Clear();
             return RedirectToAction("Index", "Home");
         }
     }
+
+
+    public class AuthorizedUser : ActionFilterAttribute, IActionFilter
+    {        
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            if (context.HttpContext.Session.GetString(SessionSettings.Email) == null)
+            {                
+                context.Result = new RedirectToRouteResult(new RouteValueDictionary
+                {
+                    {"Controller", "Account"},
+                    {"Action", "Login"}
+                });
+            }
+
+            base.OnActionExecuting(context);
+        }
+    }
+
 }
