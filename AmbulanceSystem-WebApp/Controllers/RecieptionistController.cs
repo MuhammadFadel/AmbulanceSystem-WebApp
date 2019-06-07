@@ -35,9 +35,33 @@ namespace AmbulanceSystem_WebApp.Controllers
         }
 
 
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
-            return View();
+            var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
+            var hospitalId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Hospital));
+
+            if (hospitalId != null && roleName == "Hospital")
+            {
+                try
+                {
+
+                    var bedResource = await _hospitalService.GetAllBedsForHospital(hospitalId);
+                    var patients = await _patientService.GetPatientsForHospital(hospitalId);
+                    HospitalStatisticsViewModel hospitalStatistics = new HospitalStatisticsViewModel()
+                    {
+                        AvailableBedsCount = bedResource.AvailableBeds.Count,
+                        UmAvailableBedsCount = bedResource.UnAvailableBeds.Count,
+                        PatientsCount = patients.Count()
+                    };                    
+                    return View(hospitalStatistics);
+                }
+                catch
+                {
+                    ViewBag.ErrorLoadingPatients = true;
+                    return RedirectToAction("Index", "Home");
+                }
+            }            
+            return RedirectToAction("Login", "Home");
         }
 
 
@@ -198,7 +222,7 @@ namespace AmbulanceSystem_WebApp.Controllers
 
         [Route("{patientId}")]
         public async Task<IActionResult> ViewPatient([FromRoute] Guid patientId)
-        {            
+        {
             var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
             var hospitalId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Hospital));
 
@@ -257,10 +281,6 @@ namespace AmbulanceSystem_WebApp.Controllers
             {
                 return BadRequest(e.Message);
             }
-
-
-
-
         }
 
 

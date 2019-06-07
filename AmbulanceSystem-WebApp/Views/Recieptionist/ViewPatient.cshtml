@@ -77,19 +77,21 @@
                     <h3>Reports</h3>
                     <table class="table table-striped table-hover">
                         <thead>
-                        <th>Hospital</th>
-                        <th>Creation Time</th>
-                        <th>Disease Name</th>
-                        <th>Chronic Disease</th>
+                            <tr>
+                                <th>Hospital</th>
+                                <th>Disease Name</th>
+                                <th>Chronic Disease</th>
+                                <th>Description</th>
+                            </tr>                        
                         </thead>
                         <tbody>
                             @foreach (var report in Model.Reports)
                             {
                                 <tr>
-                                    <td>@report.HospitalData.Name</td>
-                                    <td>@report.</td>
-                                    <td>Heart Attack</a></td>
-                                    <td>false</td>
+                                    <td>@report.HospitalName</td>
+                                    <td>@report.DiseaseName</td>
+                                    <td>@report.IsChronicDisease</td>
+                                    <td>@report.Description</td>
                                 </tr>
                             }
 
@@ -101,22 +103,19 @@
                     <h3>Relatives</h3>
                     <table class="table table-striped table-hover">
                         <thead>
-                        <th>Name</th>
-                        <th>Phone Number</th>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone Number</th>
+                            </tr>                        
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Muhammad Fadel</td>
-                                <td>01112283393</td>
-                            </tr>
-                            <tr>
-                                <td>Muhammad Fadel</td>
-                                <td>01112283393</td>
-                            </tr>
-                            <tr>
-                                <td>Muhammad Fadel</td>
-                                <td>01112283393</td>
-                            </tr>
+                            @foreach (var relative in Model.PatientRelatives)
+                            {
+                                <tr>
+                                    <td>@relative.Name</td>
+                                    <td>@relative.PhoneNumber</td>
+                                </tr>
+                            }                                                       
                         </tbody>
                     </table>
                 </div>

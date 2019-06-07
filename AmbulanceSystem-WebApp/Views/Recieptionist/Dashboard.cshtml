@@ -1,4 +1,4 @@
-﻿@model AmbulanceSystem_WebApp.Models.HospitalDashboardViewModel
+﻿@model AmbulanceSystem_WebApp.Resources.HospitalStatisticsViewModel
 
 @{
     ViewData["Title"] = "Dashboard";
@@ -22,7 +22,7 @@
                 <div class="card-body text-center">
                     <h4 class="card-title">Patients</h4>
                     <p class="card-text display-2">
-                        <span class="badge badge-light">1500</span>
+                        <span class="badge badge-light">@Model.PatientsCount</span>
                     </p>
                 </div>
             </div>
@@ -31,11 +31,11 @@
                     <h4 class="card-title">Beds</h4>
                     <p class="card-text display-4">
                         Avaiable
-                        <span class="badge badge-success">1500</span>
+                        <span class="badge badge-success">@Model.AvailableBedsCount</span>
                     </p>
                     <p class="card-text display-4">
                         Used
-                        <span class="badge badge-primary">500</span>
+                        <span class="badge badge-primary">@Model.UmAvailableBedsCount</span>
                     </p>
                 </div>
             </div>

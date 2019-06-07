@@ -10,35 +10,33 @@ namespace AmbulanceSystem_WebApp.Resources
         public Guid Id { get; set; }
 
         public UserData User { get; set; }
-        
+
         public DateTime Birthdate { get; set; }
 
-        
         public string BloodType { get; set; }
-
-        
 
         public string History { get; set; }
 
-       
-        public ICollection<ReportData> Reports { get; set; }
 
-        
+        public ICollection<ReportTuble> Reports { get; set; }
+
+
         public ICollection<PatientRelativesData> PatientRelatives { get; set; }
         public ICollection<RequestData> PatientRequests { get; set; }
 
         public PatientFullData()
         {
             PatientRelatives = new List<PatientRelativesData>();
-            PatientRequests=new List<RequestData>();
-            Reports=new List<ReportData>();
+            PatientRequests = new List<RequestData>();
+            Reports = new List<ReportTuble>();
         }
     }
 
     public class PatientRelativesData
     {
-        public Guid id { get; set; }
-        public string  Name { get; set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string PhoneNumber { get; set; }
     }
 
     public class RequestData
@@ -47,12 +45,7 @@ namespace AmbulanceSystem_WebApp.Resources
         public DateTime CreationTime { get; set; }
     }
 
-    public class ReportData
-    {
-        public Guid Id { get; set; }
-        public HospitalData HospitalData { get; set; }
 
-    }
 
     public class HospitalData
     {
@@ -62,18 +55,18 @@ namespace AmbulanceSystem_WebApp.Resources
 
     public class UserData
     {
-       
+
         public string Username { get; set; }
-        
+
         public string Email { get; set; }
 
-        
+
         public string PhoneNumber { get; set; }
 
-       
+
         public string NationalId { get; set; }
 
-       
+
         public string ImageUrl { get; set; }
     }
 }

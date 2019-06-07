@@ -19,7 +19,7 @@ namespace AmbulanceSystem_WebApp.Services.Core
         }
         public async Task<BedResource> GetAllBedsForHospital(Guid hospitalId)
         {
-            var responseMessage = await _httpClientService.SendHttpGetRequest(hospitalId.ToString(), "report/gethospitalbeds/");
+            var responseMessage = await _httpClientService.SendHttpGetRequest(hospitalId.ToString(), "recieptionist/gethospitalbeds/");
             var bed = JsonConvert.DeserializeObject<BedResource>(responseMessage);
             return bed;
 
