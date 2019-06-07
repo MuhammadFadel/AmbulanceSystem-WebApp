@@ -1,0 +1,61 @@
+﻿@model AmbulanceSystem_WebApp.Models.CreateReportViewModel
+
+@{
+    ViewData["Title"] = "CreateReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container" style="min-height: 690px">
+    <div class="m-5 w-50 pt-5">
+        <h1>Add Report</h1>
+        <hr />
+    </div>
+    <div class="mx-auto w-75 ">
+
+        @if (ViewBag.ErrorLoadingPatients == true)
+        {
+            <div class="alert alert-danger">
+                <strong>Sorry!</strong> Can't Get Any Patient
+            </div>
+        }
+        @if (ViewBag.ErrorAuthorize == true)
+        {
+            <div class="alert alert-danger">
+                <strong>Sorry!</strong> "Not Authorized Now Your Request Won't be Saved ..."
+            </div>
+        }
+
+
+        <form asp-controller="Recieptionist" asp-action="CreateReport" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @Html.HiddenFor(m => m.HospitalId)
+
+            <div class="form-group font-weight-bold">
+                <label for="patientId">Patient</label>
+                @Html.DropDownListFor(m => m.PatientId, new SelectList(Model.PatientsList), "Select Patient Name", new {@class = "form-control" })
+            </div>
+            <div class="form-group font-weight-bold">
+                <label for="DiseaseName">Disease Name:</label>
+                <input type="text" class="form-control" id="DiseaseName" name="DiseaseName">
+                <span asp-validation-for="DiseaseName" class="text-danger"></span>
+            </div>
+            <div class="form-group font-weight-bold">
+                <label for="Description">Description:</label>
+                <textarea class="form-control" rows="5" id="Description" name="Description"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" value="false" name="IsChronicDisease">Is a
+                    Chronic Disease
+                </label>
+                <span asp-validation-for="IsChronicDisease" class="text-danger"></span>
+            </div>
+            <button type="submit" value="Create" class="btn btn-primary mx-auto">Add Report</button>
+        </form>
+    </div>
+
+
+</div>
+

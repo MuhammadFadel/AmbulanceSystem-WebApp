@@ -8,34 +8,62 @@ using AmbulanceSystem_WebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using AmbulanceSystem_WebApp.ViewModels;
+using AmbulanceSystem_WebApp.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace AmbulanceSystem_WebApp.Controllers
 {
     [Route("[Controller]/[Action]")]
     public class RecieptionistController : Controller
     {
-        
+
         private readonly IPatientService _patientService;
         private readonly IHospitalService _hospitalService;
         private readonly IReportService _reportService;
-        public RecieptionistController(IHttpClientService httpClientService,
+        public RecieptionistController(
             IPatientService patientService,
             IHospitalService hospitalService,
             IReportService reportService
             )
         {
-            
             _patientService = patientService;
             _hospitalService = hospitalService;
             _reportService = reportService;
         }
-        
 
 
-        public IActionResult CreateReport()
+        public IActionResult Dashboard()
         {
             return View();
         }
+
+
+        public async Task<IActionResult> CreateReport()
+        {
+            var hospitalId = Guid.Parse(HttpContext.Session.GetString("userId"));
+            var roleName = HttpContext.Session.GetString("userRole");
+            if (hospitalId != null && roleName == "Hospital")
+            {
+                try
+                {
+                    var patients = await _patientService.GetPatientsForHospital(hospitalId);
+                    var createReportModel = new CreateReportViewModel
+                    {
+                        HospitalId = hospitalId,
+                        PatientsList = patients
+                    };
+                    return View(createReportModel);
+                }
+                catch
+                {
+                    ViewBag.ErrorLoadingPatients = true;
+                    return View();
+                }
+            }
+            ViewBag.ErrorAuthorize = true;
+            return RedirectToAction("Index", "Home");
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateReport(ReportCreationResources reportCreationResources)
         {
@@ -44,14 +72,14 @@ namespace AmbulanceSystem_WebApp.Controllers
 
             try
             {
-                var report =await _reportService.CreateReport(reportCreationResources);
+                var report = await _reportService.CreateReport(reportCreationResources);
                 return Ok(report);
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
-            
+
 
 
         }
@@ -64,7 +92,7 @@ namespace AmbulanceSystem_WebApp.Controllers
 
             try
             {
-                var report =await _reportService.UpdateReport(reportResources);
+                var report = await _reportService.UpdateReport(reportResources);
                 return Ok(report);
 
             }
@@ -82,7 +110,7 @@ namespace AmbulanceSystem_WebApp.Controllers
 
             try
             {
-                var report =await _reportService.GetReport(reportId);
+                var report = await _reportService.GetReport(reportId);
                 return Ok(report);
             }
             catch (Exception e)
@@ -98,7 +126,7 @@ namespace AmbulanceSystem_WebApp.Controllers
                 return BadRequest(null);
             try
             {
-                var patient =await _patientService.GetPatientFullData(patientId);
+                var patient = await _patientService.GetPatientFullData(patientId);
                 return Ok(patient);
             }
             catch (Exception e)
@@ -114,7 +142,7 @@ namespace AmbulanceSystem_WebApp.Controllers
 
             try
             {
-                var reports =await _reportService.GetPatientReports(patientId);
+                var reports = await _reportService.GetPatientReports(patientId);
                 return Ok(reports);
             }
             catch (Exception e)
@@ -131,7 +159,7 @@ namespace AmbulanceSystem_WebApp.Controllers
 
             try
             {
-                var patients =await _patientService.GetPatientsForHospital(hospitalId);
+                var patients = await _patientService.GetPatientsForHospital(hospitalId);
                 return Ok(patients);
             }
             catch (Exception e)
@@ -149,7 +177,7 @@ namespace AmbulanceSystem_WebApp.Controllers
             {
                 var bedResource = await _hospitalService.GetAllBedsForHospital(hospitalId);
                 var patients = await _patientService.GetPatientsForHospital(hospitalId);
-                HospitalStatisticsViewModel hospitalStatistics= new HospitalStatisticsViewModel()
+                HospitalStatisticsViewModel hospitalStatistics = new HospitalStatisticsViewModel()
                 {
                     AvailableBedsCount = bedResource.AvailableBeds.Count,
                     UmAvailableBedsCount = bedResource.UnAvailableBeds.Count,
@@ -162,12 +190,12 @@ namespace AmbulanceSystem_WebApp.Controllers
             {
                 return BadRequest(e.Message);
             }
-            
-            
+
+
 
 
         }
-      
+
 
     }
 
