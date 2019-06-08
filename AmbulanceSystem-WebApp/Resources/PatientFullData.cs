@@ -69,4 +69,10 @@ namespace AmbulanceSystem_WebApp.Resources
 
         public string ImageUrl { get; set; }
     }
+
+    public class PatientWithOrders
+    {
+        public PatientFullData Patient { get; set; }
+        public IEnumerable<OrdersOfPatientResource> Orders { get; set; }
+    }
 }

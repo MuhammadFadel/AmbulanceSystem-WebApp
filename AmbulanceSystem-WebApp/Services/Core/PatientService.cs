@@ -26,6 +26,14 @@ namespace AmbulanceSystem_WebApp.Services.Core
             return patient;
         }
 
+        public async Task<PatientWithOrders> GetPatientWithOrders(Guid patientId)
+        {
+            var responseMessage = await
+                _httpClientService.SendHttpGetRequest(patientId.ToString(), "authority/GetPatientWithOrders/");
+            var patient = JsonConvert.DeserializeObject<PatientWithOrders>(responseMessage);
+            return patient;
+        }
+
         public async Task<IEnumerable<PatientFullData>> GetPatientsForHospital(Guid hospitalId)
         {
             var responseMessage = await _httpClientService

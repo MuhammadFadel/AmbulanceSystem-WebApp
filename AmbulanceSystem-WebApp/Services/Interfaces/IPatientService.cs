@@ -10,6 +10,8 @@ namespace AmbulanceSystem_WebApp.Services.Interfaces
     {
         Task<PatientFullData> GetPatientFullData(Guid patientId);
         Task<IEnumerable<PatientFullData>> GetPatientsForHospital(Guid hospitalId);
+
+        Task<PatientWithOrders> GetPatientWithOrders(Guid patientId);
     }
 
 }

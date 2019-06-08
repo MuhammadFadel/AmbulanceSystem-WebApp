@@ -72,7 +72,7 @@ namespace AmbulanceSystemWebApp.Controllers
                 if (userInfo.RoleName.Equals("Hospital"))
                 {
                     var recieptionistData = await _recieptionistService.GetRecieptionistFullData(userInfo.Id);
-                    TempData["RecieptionistData"] = JsonConvert.SerializeObject(recieptionistData);
+                    TempData["recieptionistData"] = JsonConvert.SerializeObject(recieptionistData);
                     TempData.Keep();
 
                     _session.SetString(Email, userInfo.Email);
@@ -93,6 +93,8 @@ namespace AmbulanceSystemWebApp.Controllers
                 else if (userInfo.RoleName.Equals("Authority"))
                 {
                     var authorityData = await _authorityService.AuthorityFullData(userInfo.Id);
+                    TempData["authorityData"] = JsonConvert.SerializeObject(authorityData);
+                    TempData.Keep();
 
                     _session.SetString(Email, userInfo.Email);
                     _session.SetString(UserId, userInfo.Id.ToString());
