@@ -99,4 +99,14 @@ namespace AmbulanceSystem_WebApp.Resources
         }
     }
 
+    public class OrdersOfPatientResource
+    {
+        public Guid Id { get; set; }
+        public virtual ResponseRequestData Request { get; set; }
+        public virtual ResponseParamedicData Paramedic { get; set; }
+        public virtual ResponseFinishedOrder FinishedOrder { get; set; }
+        public virtual ResponseFailedOrder FailedOrder { get; set; }
+        public DateTime CreationDate { get; set; }
+    }
+
 }

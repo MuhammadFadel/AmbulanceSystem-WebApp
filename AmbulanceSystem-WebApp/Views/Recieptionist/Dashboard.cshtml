@@ -1,0 +1,92 @@
+﻿@model AmbulanceSystem_WebApp.Resources.HospitalStatisticsViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col m-5 w-75 pt-5">
+            <h1>Hospital Dashboard</h1>
+            <hr />
+        </div>
+        <div class="col m-5 pt-5 align-right">
+            <a class="btn btn-primary-outline" asp-controller="Home" asp-action="Index">Back to Home</a>
+        </div>
+    </div>
+    
+    <div class="m-5">
+        <div class="card-columns">
+            <div class="card bg-info text-light p-3">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Patients</h4>
+                    <p class="card-text display-2">
+                        <span class="badge badge-light">@Model.PatientsCount</span>
+                    </p>
+                </div>
+            </div>
+            <div class="card bg-secondary text-light p-3">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Beds</h4>
+                    <p class="card-text display-4">
+                        Avaiable
+                        <span class="badge badge-success">@Model.AvailableBedsCount</span>
+                    </p>
+                    <p class="card-text display-4">
+                        Used
+                        <span class="badge badge-primary">@Model.UmAvailableBedsCount</span>
+                    </p>
+                </div>
+            </div>
+            <div class="py-3">
+                <a asp-action="CreateReport" class="d-block btn btn-primary">Add Report</a>
+                <a asp-action="ViewPatients" class="d-block btn btn-info">View Patients</a>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="mt-4"></div>
+
+    <div class="m-5">
+        <h3>Notifications of Coming Patients</h3>
+        <table class="table table-resposive table-hover">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Department</th>
+                    <th>History</th>
+                    <th>Arrival Duration</th>
+                </tr>                
+            </thead>
+            <tr>
+                <td><a href="">Muhammad Fadel</a></td>
+                <td><a href="">Heart Department</a></td>
+                <td>
+                    <p>
+                        Lorem ipsum is a pseudo-Latin text used in web design,
+                        typography, layout, and printing in place of English to emphasise design elements over
+                        content.
+                    </p>                                           
+                </td>
+                <td><p>35 Mins</p></td>
+            </tr>
+            <tr>
+                <td><a href="">Muhammad Fadel</a></td>
+                <td><a href="">Heart Department</a></td>
+                <td>
+                    <p>
+                        Lorem ipsum is a pseudo-Latin text used in web design,
+                        typography, layout, and printing in place of English to emphasise design elements over
+                        content.
+                    </p>
+                </td>
+                <td><p>35 Mins</p></td>
+            </tr>
+        </table>
+    </div>
+    
+</div>
+

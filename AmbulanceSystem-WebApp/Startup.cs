@@ -30,10 +30,15 @@ namespace AmbulanceSystem_WebApp
         public void ConfigureServices(IServiceCollection services)
         {            
             
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddSessionStateTempDataProvider();
+
 
             services.AddDistributedMemoryCache();
-            services.AddSession();
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(20);
+            });
 
             //services.Configure<CookiePolicyOptions>(options =>
             //{
@@ -44,6 +49,7 @@ namespace AmbulanceSystem_WebApp
             //     options.MinimumSameSitePolicy = SameSiteMode.None;
             //});
 
+            services.AddHttpContextAccessor();
 
             services.AddScoped<IHttpClientService, HttpClientService>();
             services.AddHttpClient("Api",
@@ -51,6 +57,11 @@ namespace AmbulanceSystem_WebApp
             services.AddScoped<IRecieptionistService, RecieptionistService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAuthorityService, AuthorityService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IPatientService,PatientService>();
+            services.AddScoped<IParamedicService, ParamedicService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IHospitalService, HospitalService>();
 
 
         }
@@ -70,8 +81,8 @@ namespace AmbulanceSystem_WebApp
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseSession();
             app.UseCookiePolicy();
+            app.UseSession();            
 
             app.UseMvc(routes =>
             {
