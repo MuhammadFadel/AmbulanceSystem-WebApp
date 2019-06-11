@@ -76,9 +76,10 @@ namespace AmbulanceSystemWebApp.Controllers
                     TempData.Keep();
 
                     _session.SetString(Email, userInfo.Email);
-                    _session.SetString(UserId, userInfo.Id.ToString());
+                    _session.SetString(UserId, recieptionistData.Id.ToString());                    
                     _session.SetString(RoleName, userInfo.RoleName);
                     _session.SetString(Hospital, recieptionistData.HospitalData.HospitalData.Id.ToString());
+                    
 
                     User.AddIdentity(new System.Security.Claims.ClaimsIdentity
                     {
@@ -97,7 +98,7 @@ namespace AmbulanceSystemWebApp.Controllers
                     TempData.Keep();
 
                     _session.SetString(Email, userInfo.Email);
-                    _session.SetString(UserId, userInfo.Id.ToString());
+                    _session.SetString(UserId, authorityData.Id.ToString());
                     _session.SetString(RoleName, userInfo.RoleName);
                     _session.SetString(Authority, authorityData.AuthorityFullData.Id.ToString());
 

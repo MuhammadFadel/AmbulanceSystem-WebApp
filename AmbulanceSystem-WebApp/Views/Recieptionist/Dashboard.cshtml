@@ -15,7 +15,7 @@
             <a class="btn btn-primary-outline" asp-controller="Home" asp-action="Index">Back to Home</a>
         </div>
     </div>
-    
+
     <div class="m-5">
         <div class="card-columns">
             <div class="card bg-info text-light p-3">
@@ -56,37 +56,59 @@
             <thead>
                 <tr>
                     <th>Patient</th>
-                    <th>Department</th>
-                    <th>History</th>
-                    <th>Arrival Duration</th>
-                </tr>                
+                    <th>Blood Type</th>
+                    <th>BirthDate</th>
+                    <th>History</th>                    
+                </tr>
             </thead>
-            <tr>
-                <td><a href="">Muhammad Fadel</a></td>
-                <td><a href="">Heart Department</a></td>
-                <td>
-                    <p>
-                        Lorem ipsum is a pseudo-Latin text used in web design,
-                        typography, layout, and printing in place of English to emphasise design elements over
-                        content.
-                    </p>                                           
-                </td>
-                <td><p>35 Mins</p></td>
-            </tr>
-            <tr>
-                <td><a href="">Muhammad Fadel</a></td>
-                <td><a href="">Heart Department</a></td>
-                <td>
-                    <p>
-                        Lorem ipsum is a pseudo-Latin text used in web design,
-                        typography, layout, and printing in place of English to emphasise design elements over
-                        content.
-                    </p>
-                </td>
-                <td><p>35 Mins</p></td>
-            </tr>
+            <tbody id="notificationsTableBody">
+                
+            </tbody>
         </table>
     </div>
-    
+
 </div>
 
+
+<script>
+
+    $(document).ready(function () {
+
+        //Intialize Hub Connection
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://ambulancesystem.azurewebsites.net/RequestHub")
+            .build();
+
+        //Get Employee Session Id to Connect To the Server
+        var receptionistId = "@Context.Session.GetString("_UserId")";
+
+        //Start Connection To The Hub
+        connection.start().then(function () {
+            console.log("connected");
+        });
+
+        //Received Success Message
+        connection.on("ConnectionReceived", renderMessage);
+
+
+        function renderMessage(message) {
+            console.log(message);
+            //Authorize Account
+            connection.invoke("AuthorizeReceptionist", receptionistId);
+        }
+
+        connection.on("ConnectionStatus", renderMessage);
+        connection.on("ReceiveNewPatient", showNotification);
+
+        function showNotification(order) {
+            console.log(order);
+
+            var deserializedObject = JSON.parse(order);
+            var newElement = '<tr><td><a href="/Recieptionist/ViewPatient/' + deserializedObject.Id + '">' + deserializedObject.User.Username + '</a></td><td>' + deserializedObject.BloodType + '</td><td>' + deserializedObject.Birthdate + '</td><td>' + deserializedObject.History + '</td></tr>';
+            $("#notificationsTableBody").prepend(newElement);
+        }
+
+
+    });
+
+</script>

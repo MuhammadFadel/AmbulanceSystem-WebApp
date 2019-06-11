@@ -11,6 +11,8 @@
           helping the hospital to know that it should be prepared for patient and ambulance authority control online everything.
           Also, helping the ministry of health to monitor whole processes and get final statistics and reports.
           System will provide a lot of predictions results for improving Medical, Hospital and Ambulance service quality.">
+    
+    
 
     <title>@ViewData["Title"] - AmbulanceSystem_WebApp</title>
 
@@ -28,12 +30,35 @@
         <link rel="stylesheet" href="~/lib/assets/dropdown/css/style.css">
         <link rel="stylesheet" href="~/lib/assets/theme/css/style.css">
         <link rel="stylesheet" href="~/lib/assets/mobirise/css/mbr-additional.css" type="text/css">
+
+        
+        <script src="~/lib/assets/web/assets/jquery/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/aspnet-signalr/1.1.4/signalr.min.js"></script>
+
+
     </environment>
     <environment exclude="Development">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+        @*<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />*@
+
+
+        <link rel="stylesheet" href="~/lib/assets/web//assets/mobirise-icons-bold/mobirise-icons-bold.css">
+        <link rel="stylesheet" href="~/lib/assets/web/assets/mobirise-icons/mobirise-icons.css">
+        <link rel="stylesheet" href="~/lib/assets/tether/tether.min.css">
+        <link rel="stylesheet" href="~/lib/assets/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="~/lib/assets/bootstrap/css/bootstrap-grid.min.css">
+        <link rel="stylesheet" href="~/lib/assets/bootstrap/css/bootstrap-reboot.min.css">
+        <link rel="stylesheet" href="~/lib/assets/animatecss/animate.min.css">
+        <link rel="stylesheet" href="~/lib/assets/dropdown/css/style.css">
+        <link rel="stylesheet" href="~/lib/assets/theme/css/style.css">
+        <link rel="stylesheet" href="~/lib/assets/mobirise/css/mbr-additional.css" type="text/css">
+
+
+        <script src="~/lib/assets/web/assets/jquery/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/aspnet-signalr/1.1.4/signalr.min.js"></script>
+
     </environment>
 </head>
 <body>
@@ -65,7 +90,7 @@
         <script src="~/js/site.js" asp-append-version="true"></script>*@
 
 
-        <script src="~/lib/assets/web/assets/jquery/jquery.min.js"></script>
+        
         <script src="~/lib/assets/tether/tether.min.js"></script>
         <script src="~/lib/assets/popper/popper.min.js"></script>
         <script src="~/lib/assets/bootstrap/js/bootstrap.min.js"></script>
@@ -78,9 +103,11 @@
         <script src="~/lib/assets/touchswipe/jquery.touch-swipe.min.js"></script>
         <script src="~/lib/assets/theme/js/script.js"></script>
 
+        
+
     </environment>
     <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+        @*<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
                 asp-fallback-test="window.jQuery"
                 crossorigin="anonymous"
@@ -92,7 +119,22 @@
                 crossorigin="anonymous"
                 integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd">
         </script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>*@
+
+
+        <script src="~/lib/assets/tether/tether.min.js"></script>
+        <script src="~/lib/assets/popper/popper.min.js"></script>
+        <script src="~/lib/assets/bootstrap/js/bootstrap.min.js"></script>
+        <script src="~/lib/assets/parallax/jarallax.min.js"></script>
+        <script src="~/lib/assets/viewportchecker/jquery.viewportchecker.js"></script>
+        <script src="~/lib/assets/smoothscroll/smooth-scroll.js"></script>
+        <script src="~/lib/assets/bootstrapcarouselswipe/bootstrap-carousel-swipe.js"></script>
+        <script src="~/lib/assets/mbr-clients-slider/mbr-clients-slider.js"></script>
+        <script src="~/lib/assets/dropdown/js/script.min.js"></script>
+        <script src="~/lib/assets/touchswipe/jquery.touch-swipe.min.js"></script>
+        <script src="~/lib/assets/theme/js/script.js"></script>
+
+
     </environment>
 
     @RenderSection("Scripts", required: false)
