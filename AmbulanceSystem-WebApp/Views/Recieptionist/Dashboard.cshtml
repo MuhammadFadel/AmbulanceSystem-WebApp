@@ -57,23 +57,12 @@
                 <tr>
                     <th>Patient</th>
                     <th>Blood Type</th>
-                    <th>History</th>
-                    <th>Creation Time</th>
+                    <th>BirthDate</th>
+                    <th>History</th>                    
                 </tr>
             </thead>
             <tbody id="notificationsTableBody">
-                <tr>
-                    <td><a href="">Muhammad Fadel</a></td>
-                    <td>O-</td>
-                    <td>
-                        <p>
-                            Lorem ipsum is a pseudo-Latin text used in web design,
-                            typography, layout, and printing in place of English to emphasise design elements over
-                            content.
-                        </p>
-                    </td>
-                    <td><p>35 Mins</p></td>
-                </tr>
+                
             </tbody>
         </table>
     </div>
@@ -115,7 +104,7 @@
             console.log(order);
 
             var deserializedObject = JSON.parse(order);
-            var newElement = '<tr><td><a href="/Recieptionist/ViewPatient/' + deserializedObject.Id + '">' + deserializedObject.User.Username + '</a></td><td>' + deserializedObject.BloodType + '</td><td>' + deserializedObject.History + '</td><td>' + deserializedObject.CreationTime + '</td></tr>';
+            var newElement = '<tr><td><a href="/Recieptionist/ViewPatient/' + deserializedObject.Id + '">' + deserializedObject.User.Username + '</a></td><td>' + deserializedObject.BloodType + '</td><td>' + deserializedObject.Birthdate + '</td><td>' + deserializedObject.History + '</td></tr>';
             $("#notificationsTableBody").prepend(newElement);
         }
 
