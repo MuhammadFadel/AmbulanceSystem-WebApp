@@ -47,13 +47,26 @@ namespace AmbulanceSystem_WebApp.Controllers
 
                     var bedResource = await _hospitalService.GetAllBedsForHospital(hospitalId);
                     var patients = await _patientService.GetPatientsForHospital(hospitalId);
-                    HospitalStatisticsViewModel hospitalStatistics = new HospitalStatisticsViewModel()
+                    if(bedResource == null || patients == null)
                     {
-                        AvailableBedsCount = bedResource.AvailableBeds.Count,
-                        UmAvailableBedsCount = bedResource.UnAvailableBeds.Count,
-                        PatientsCount = patients.Count()
-                    };                    
-                    return View(hospitalStatistics);
+                        HospitalStatisticsViewModel ehospitalStatistics = new HospitalStatisticsViewModel()
+                        {
+                            AvailableBedsCount = 0,
+                            UmAvailableBedsCount = 0,
+                            PatientsCount = 0
+                        };
+                        return View(ehospitalStatistics);
+                    }
+                    else
+                    {
+                        HospitalStatisticsViewModel hospitalStatistics = new HospitalStatisticsViewModel()
+                        {
+                            AvailableBedsCount = bedResource.AvailableBeds.Count,
+                            UmAvailableBedsCount = bedResource.UnAvailableBeds.Count,
+                            PatientsCount = patients.Count()
+                        };
+                        return View(hospitalStatistics);
+                    }                    
                 }
                 catch
                 {

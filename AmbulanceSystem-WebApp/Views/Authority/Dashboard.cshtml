@@ -36,7 +36,7 @@
                         <span class="badge badge-primary">@Model.unAvailableParamedicCount</span>
                     </p>
                 </div>
-            </div>            
+            </div>
             <div class="py-3">
                 <a asp-action="ViewParamedics" class="d-block btn btn-primary">View Paramedics</a>
                 <a asp-action="ViewOrders" class="d-block btn btn-info">View Orders</a>
@@ -48,28 +48,65 @@
         <table class="table table-resposive table-hover">
             <thead>
                 <tr>
-                    <th>Patient</th>
                     <th>Paramedic</th>
-                    <th>Hospital</th>
-                    <th>Duration</th>
-                </tr>            
+                    <th>Patient</th>
+                    <th>Ambulance Car</th>
+                    <th>Creation Time</th>
+                </tr>
             </thead>
-            <tbody>
+            <tbody id="notificationsTableBody">
                 <tr>
                     <td><a href="">Muhammad Fadel</a></td>
                     <td><a href="">Muhammad Walaa</a></td>
                     <td><a href="">Abo-ElReish For Children</a></td>
                     <td><a href="">35 Mins</a></td>
                 </tr>
-                <tr>
-                    <td><a href="">Muhammad Fadel</a></td>
-                    <td><a href="">Muhammad Walaa</a></td>
-                    <td><a href="">Abo-ElReish For Children</a></td>
-                    <td><a href="">35 Mins</a></td>
-                </tr>
-            </tbody>                      
+            </tbody>
         </table>
     </div>
 </div>
 
 
+<script>
+
+    $(document).ready(function () {
+
+        //Intialize Hub Connection
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://ambulancesystem.azurewebsites.net/RequestHub")
+            .build();
+
+        //Get Employee Session Id to Connect To the Server
+        var employeeId = "@Context.Session.GetString("_UserId")";
+
+        //Start Connection To The Hub
+        connection.start().then(function () {
+            console.log("connected");
+        });
+
+        //Received Success Message
+        connection.on("ConnectionReceived", renderMessage);
+
+
+        function renderMessage(message) {
+            console.log(message);
+            //Authorize Account
+            connection.invoke("AuthorizeEmployee", employeeId);
+        }
+
+        connection.on("ConnectionStatus", renderMessage);
+        connection.on("ReceiveNewOrder", showNotification);
+
+        function showNotification(order) {
+            console.log(order);
+
+            var deserializedObject = JSON.parse(order);
+            var newElement = '<tr><td><a href="/Authority/ViewParamedic/' + deserializedObject.Paramedic.Id + '">' + deserializedObject.Paramedic.Username + '</a></td><td><a href="/Authority/ViewPatient/' + deserializedObject.Request.Patient.Id + '">' + deserializedObject.Request.Patient.Username + '</a></td><td>' + deserializedObject.Paramedic.AmbulanceCar.CarNumber + '</td><td>' + deserializedObject.CreationDate + '</td></tr>';
+            $("#notificationsTableBody").prepend(newElement);
+        }
+
+    });
+
+</script>
+
+@*.withUrl("http://localhost:1882/RequestHub")*@
