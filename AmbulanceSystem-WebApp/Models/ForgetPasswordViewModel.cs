@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,6 +17,10 @@ namespace AmbulanceSystem_WebApp.Models
 
     public class ConfirmNewPassword
     {
+        [HiddenInput]
+        [Required]
+        public Guid LinkId { get; set; }
+
         [Required(ErrorMessage ="Password Field Is Required")]
         [DataType(DataType.Password)]        
         public string Password { get; set; }
