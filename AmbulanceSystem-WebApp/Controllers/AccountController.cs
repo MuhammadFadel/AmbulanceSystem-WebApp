@@ -143,15 +143,15 @@ namespace AmbulanceSystemWebApp.Controllers
                 return RedirectToAction("Index", "Home");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult ForgetPassword(ForgetPasswordViewModel forgetPasswordViewModel)
-        {
-            if (!ModelState.IsValid)
-                return View(forgetPasswordViewModel);
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult ForgetPassword(ForgetPasswordViewModel forgetPasswordViewModel)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return View(forgetPasswordViewModel);
 
 
-        }
+        //}
     }
 
 
