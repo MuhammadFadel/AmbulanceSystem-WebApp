@@ -134,6 +134,24 @@ namespace AmbulanceSystemWebApp.Controllers
             _session.Clear();
             return RedirectToAction("Index", "Home");
         }
+
+        public IActionResult ForgetPassword()
+        {
+            if (HttpContext.Session.GetString(Email) == null)
+                return View();
+            else
+                return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ForgetPassword(ForgetPasswordViewModel forgetPasswordViewModel)
+        {
+            if (!ModelState.IsValid)
+                return View(forgetPasswordViewModel);
+
+
+        }
     }
 
 
