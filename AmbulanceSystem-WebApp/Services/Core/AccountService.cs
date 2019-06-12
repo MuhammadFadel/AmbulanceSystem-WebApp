@@ -40,24 +40,28 @@ namespace AmbulanceSystem_WebApp.Services.Core
 
         public async Task<Boolean> ForgetPassword(string email)
         {
-            var response = await _httpClientService.SendHttpGetRequest(email,"users/forgetpassword/");
-
-            if (response.Equals("false"))
+            try
+            {
+                var response = await _httpClientService.SendHttpGetRequest(email, "users/forgetpassword/");
+                return true;
+            }
+            catch
+            {
                 return false;
-
-            return true;
-
+            }                                   
         }
 
-        public async Task<Boolean> ResetPassword(Guid linkId, ConfirmNewPassword confirmNewPassword)
+        public async Task<Boolean> ResetPassword(ConfirmNewPassword confirmNewPassword)
         {
-            var response = await _httpClientService.SendHttpPostRequest(confirmNewPassword, "users/forgetpassword/" + linkId.ToString());
-
-            if (response.Equals("false"))
+            try
+            {
+                var response = await _httpClientService.SendHttpPostRequest(confirmNewPassword, "users/ResetPassword/");
+                return response.Equals("true");
+            }
+            catch
+            {
                 return false;
-
-            return true;
-
+            }
         }
     }
 }

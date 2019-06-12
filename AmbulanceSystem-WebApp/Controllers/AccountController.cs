@@ -15,10 +15,10 @@ using Newtonsoft.Json;
 
 namespace AmbulanceSystemWebApp.Controllers
 {
-    [Route("[controller]/[Action]")]    
+    [Route("[controller]/[Action]")]
     public class AccountController : Controller
     {
-        private readonly string UserId = SessionSettings.UserId ;       
+        private readonly string UserId = SessionSettings.UserId;
         private readonly string Email = SessionSettings.Email;
         private readonly string RoleName = SessionSettings.RoleName;
         private readonly string Hospital = SessionSettings.Hospital;
@@ -151,15 +151,60 @@ namespace AmbulanceSystemWebApp.Controllers
                 return RedirectToAction("Index", "Home");
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult ForgetPassword(ForgetPasswordViewModel forgetPasswordViewModel)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return View(forgetPasswordViewModel);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordViewModel forgetPasswordViewModel)
+        {
+            if (!ModelState.IsValid)
+                return View(forgetPasswordViewModel);
 
+            var mailSent = await _accountService.ForgetPassword(forgetPasswordViewModel.Email);
 
-        //}
+            if (mailSent)
+            {
+                ViewBag.mailSent = true;
+                return View();
+            }
+            else
+            {
+                ViewBag.mailSent = false;
+                return View(forgetPasswordViewModel);
+            }
+        }
+
+        [Route("{linkId}")]
+        public IActionResult ResetPassword(Guid linkId)
+        {
+            if (HttpContext.Session.GetString(Email) == null)
+            {
+                return View(new ConfirmNewPassword {
+                    LinkId = linkId
+                });
+            }                
+            else
+                return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPasswordConfirmation(ConfirmNewPassword confirmNewPassword)
+        {
+            if (!ModelState.IsValid)
+                return View("ResetPassword", confirmNewPassword);
+
+            var passwordChanged = await _accountService.ResetPassword(confirmNewPassword);
+
+            if (passwordChanged)
+            {
+                ViewBag.passwordChanged = true;
+                return View("ResetPassword");
+            }
+            else
+            {
+                ViewBag.passwordChanged = false;
+                return View("ResetPassword", confirmNewPassword);
+            }
+        }
     }
 
 
