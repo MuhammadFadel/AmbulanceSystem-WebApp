@@ -54,64 +54,72 @@ namespace AmbulanceSystemWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginInfoResources loginInfoResources)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return View(loginInfoResources);
-            }
-            else
-            {
-                var userInfo = await _accountService.Login(loginInfoResources);
-
-                if (userInfo == null)
+                if (!ModelState.IsValid)
                 {
-                    ViewBag.userFounded = false;
-                    ViewBag.userAuthorized = false;
-                    return View();
-                }
-
-                if (userInfo.RoleName.Equals("Hospital"))
-                {
-                    var recieptionistData = await _recieptionistService.GetRecieptionistFullData(userInfo.Id);
-                    TempData["recieptionistData"] = JsonConvert.SerializeObject(recieptionistData);
-                    TempData.Keep();
-
-                    _session.SetString(Email, userInfo.Email);
-                    _session.SetString(UserId, recieptionistData.Id.ToString());                    
-                    _session.SetString(RoleName, userInfo.RoleName);
-                    _session.SetString(Hospital, recieptionistData.HospitalData.HospitalData.Id.ToString());
-                    
-
-                    User.AddIdentity(new System.Security.Claims.ClaimsIdentity
-                    {
-                        Label = _session.GetString(Email)
-                    });
-
-
-
-                    ViewBag.userEmail = userInfo.Email;
-                    return RedirectToAction("Index", "Home");
-                }
-                else if (userInfo.RoleName.Equals("Authority"))
-                {
-                    var authorityData = await _authorityService.AuthorityFullData(userInfo.Id);
-                    TempData["authorityData"] = JsonConvert.SerializeObject(authorityData);
-                    TempData.Keep();
-
-                    _session.SetString(Email, userInfo.Email);
-                    _session.SetString(UserId, authorityData.Id.ToString());
-                    _session.SetString(RoleName, userInfo.RoleName);
-                    _session.SetString(Authority, authorityData.AuthorityFullData.Id.ToString());
-
-                    ViewBag.userEmail = userInfo.Email;
-                    return RedirectToAction("Index", "Home");
+                    return View(loginInfoResources);
                 }
                 else
                 {
-                    ViewBag.userFounded = true;
-                    ViewBag.userAuthorized = false;
-                    return View();
-                }
+                    var userInfo = await _accountService.Login(loginInfoResources);
 
+                    if (userInfo == null)
+                    {
+                        ViewBag.userFounded = false;
+                        ViewBag.userAuthorized = false;
+                        return View();
+                    }
+
+                    if (userInfo.RoleName.Equals("Hospital"))
+                    {
+                        var recieptionistData = await _recieptionistService.GetRecieptionistFullData(userInfo.Id);
+                        TempData["recieptionistData"] = JsonConvert.SerializeObject(recieptionistData);
+                        TempData.Keep();
+
+                        _session.SetString(Email, userInfo.Email);
+                        _session.SetString(UserId, recieptionistData.Id.ToString());
+                        _session.SetString(RoleName, userInfo.RoleName);
+                        _session.SetString(Hospital, recieptionistData.HospitalData.HospitalData.Id.ToString());
+
+
+                        User.AddIdentity(new System.Security.Claims.ClaimsIdentity
+                        {
+                            Label = _session.GetString(Email)
+                        });
+
+
+
+                        ViewBag.userEmail = userInfo.Email;
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else if (userInfo.RoleName.Equals("Authority"))
+                    {
+                        var authorityData = await _authorityService.AuthorityFullData(userInfo.Id);
+                        TempData["authorityData"] = JsonConvert.SerializeObject(authorityData);
+                        TempData.Keep();
+
+                        _session.SetString(Email, userInfo.Email);
+                        _session.SetString(UserId, authorityData.Id.ToString());
+                        _session.SetString(RoleName, userInfo.RoleName);
+                        _session.SetString(Authority, authorityData.AuthorityFullData.Id.ToString());
+
+                        ViewBag.userEmail = userInfo.Email;
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        ViewBag.userFounded = true;
+                        ViewBag.userAuthorized = false;
+                        return View();
+                    }
+
+                }
+            }
+            
+            catch (Exception e)
+            {
+                return View();
             }
         }
 
