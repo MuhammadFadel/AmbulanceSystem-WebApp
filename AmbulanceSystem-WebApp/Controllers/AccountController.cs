@@ -15,10 +15,10 @@ using Newtonsoft.Json;
 
 namespace AmbulanceSystemWebApp.Controllers
 {
-    [Route("[controller]/[Action]")]    
+    [Route("[controller]/[Action]")]
     public class AccountController : Controller
     {
-        private readonly string UserId = SessionSettings.UserId ;       
+        private readonly string UserId = SessionSettings.UserId;
         private readonly string Email = SessionSettings.Email;
         private readonly string RoleName = SessionSettings.RoleName;
         private readonly string Hospital = SessionSettings.Hospital;
@@ -76,10 +76,10 @@ namespace AmbulanceSystemWebApp.Controllers
                     TempData.Keep();
 
                     _session.SetString(Email, userInfo.Email);
-                    _session.SetString(UserId, recieptionistData.Id.ToString());                    
+                    _session.SetString(UserId, recieptionistData.Id.ToString());
                     _session.SetString(RoleName, userInfo.RoleName);
                     _session.SetString(Hospital, recieptionistData.HospitalData.HospitalData.Id.ToString());
-                    
+
 
                     User.AddIdentity(new System.Security.Claims.ClaimsIdentity
                     {
@@ -133,6 +133,69 @@ namespace AmbulanceSystemWebApp.Controllers
         {
             _session.Clear();
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult ForgetPassword()
+        {
+            if (HttpContext.Session.GetString(Email) == null)
+                return View();
+            else
+                return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordViewModel forgetPasswordViewModel)
+        {
+            if (!ModelState.IsValid)
+                return View(forgetPasswordViewModel);
+
+            var mailSent = await _accountService.ForgetPassword(forgetPasswordViewModel.Email);
+
+            if (mailSent)
+            {
+                ViewBag.mailSent = true;
+                return View();
+            }
+            else
+            {
+                ViewBag.mailSent = false;
+                return View(forgetPasswordViewModel);
+            }
+        }
+
+        [Route("{linkId}")]
+        public IActionResult ResetPassword(Guid linkId)
+        {
+            if (HttpContext.Session.GetString(Email) == null)
+            {
+                return View(new ConfirmNewPassword {
+                    LinkId = linkId
+                });
+            }                
+            else
+                return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPasswordConfirmation(ConfirmNewPassword confirmNewPassword)
+        {
+            if (!ModelState.IsValid)
+                return View("ResetPassword", confirmNewPassword);
+
+            var passwordChanged = await _accountService.ResetPassword(confirmNewPassword);
+
+            if (passwordChanged)
+            {
+                ViewBag.passwordChanged = true;
+                return View("ResetPassword");
+            }
+            else
+            {
+                ViewBag.passwordChanged = false;
+                return View("ResetPassword", confirmNewPassword);
+            }
         }
     }
 
