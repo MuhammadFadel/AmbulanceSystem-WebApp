@@ -119,6 +119,8 @@ namespace AmbulanceSystemWebApp.Controllers
             
             catch (Exception e)
             {
+                ViewBag.userFounded = true;
+                ViewBag.userAuthorized = false;
                 return View();
             }
         }
