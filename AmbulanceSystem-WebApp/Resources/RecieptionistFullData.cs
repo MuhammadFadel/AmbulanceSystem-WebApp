@@ -11,6 +11,17 @@ namespace AmbulanceSystem_WebApp.Resources
         public Guid Id { get; set; }
         public UserData User { get; set; }
         public HospitalBedsData HospitalData { get; set; }
+        public ICollection<NotificationData> NotificationData { get; set; }
+        public RecieptionistFullData()
+        {
+            NotificationData = new List<NotificationData>();
+        }
+    }
+
+    public class NotificationData
+    {
+        public Guid NotificationId { get; set; }
+        public string NotificationText { get; set; }
     }
 
     public class HospitalBedsData

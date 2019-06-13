@@ -10,6 +10,12 @@ namespace AmbulanceSystem_WebApp.Resources
         public Guid Id { get; set; }
         public UserData UserData { get; set; }
         public AuthorityFullData AuthorityFullData { get; set; }
+        public ICollection<NotificationData> NotificationData { get; set; }
+
+        public AuthorityEmployeeFullData()
+        {
+            NotificationData = new List<NotificationData>();
+        }
     }
 
     public class AuthorityFullData
