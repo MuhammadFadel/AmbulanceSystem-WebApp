@@ -110,14 +110,23 @@ namespace AmbulanceSystem_WebApp.Controllers
                     {
                         HospitalId = hospitalId
                     };
-                    foreach (var patient in patients)
+
+                    if(patients != null)
                     {
-                        createReportModel.PatientsList.Add(new CreateReportPatientList
+                        foreach (var patient in patients)
                         {
-                            Id = patient.Id,
-                            Username = patient.User.Username
-                        });
+                            createReportModel.PatientsList.Add(new CreateReportPatientList
+                            {
+                                Id = patient.Id,
+                                Username = patient.User.Username
+                            });
+                        }
                     }
+                    else
+                    {
+                        patients = new List<PatientFullData>();
+                        createReportModel.PatientsList = new List<CreateReportPatientList>();
+                    }                    
 
                     return View(createReportModel);
                 }
