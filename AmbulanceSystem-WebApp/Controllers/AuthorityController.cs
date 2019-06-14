@@ -20,6 +20,7 @@ namespace AmbulanceSystem_WebApp.Controllers
         private readonly Guid authorityId;
         private readonly Guid userId;
 
+        private readonly ISession _session;
 
         private readonly IPatientService _patientService;
         private readonly IHttpClientService _httpClientService;
@@ -27,13 +28,14 @@ namespace AmbulanceSystem_WebApp.Controllers
         private readonly IOrderService _orderService;
         private readonly IAuthorityService _authorityService;
 
-        public AuthorityController(
+        public AuthorityController(IHttpContextAccessor httpContextAccessor,
             IHttpClientService httpClientService,
             IPatientService patientService,
             IParamedicService paramedicService,
             IOrderService orderService,
             IAuthorityService authorityService)
         {
+            _session = httpContextAccessor.HttpContext.Session;
             _orderService = orderService;
             _authorityService = authorityService;
             _patientService = patientService;
@@ -42,13 +44,15 @@ namespace AmbulanceSystem_WebApp.Controllers
 
             try
             {
-                roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
-                authorityId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Authority));
-                userId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.UserId));
+                roleName = _session.GetString(SessionSettings.RoleName);
+                authorityId = Guid.Parse(_session.GetString(SessionSettings.Authority));
+                userId = Guid.Parse(_session.GetString(SessionSettings.UserId));
             }
             catch
             {
-                RedirectToAction("Login", "Account");
+                roleName = null;
+                authorityId = Guid.Empty;
+                userId = Guid.Empty;
             }
         }
 
@@ -65,10 +69,13 @@ namespace AmbulanceSystem_WebApp.Controllers
                     var employee = await _authorityService.AuthorityFullData(userId);
 
                     List<ResponseOrderData> notificationList = new List<ResponseOrderData>();
-                    foreach (var notification in employee.NotificationData)
-                    {
-                        notificationList.Add(JsonConvert.DeserializeObject<ResponseOrderData>(notification.NotificationText));
-                    }
+                    if (employee != null)
+                    {                        
+                        foreach (var notification in employee.NotificationData)
+                        {
+                            notificationList.Add(JsonConvert.DeserializeObject<ResponseOrderData>(notification.NotificationText));
+                        }
+                    }                   
 
                     AuthorityStatisticsViewModel authorityStatistics = new AuthorityStatisticsViewModel()
                     {
@@ -240,10 +247,14 @@ namespace AmbulanceSystem_WebApp.Controllers
             var employee = await _authorityService.AuthorityFullData(userId);
 
             List<ResponseOrderData> notificationList = new List<ResponseOrderData>();
-            foreach(var notification in employee.NotificationData)
+
+            if (employee != null)
             {
-                notificationList.Add(JsonConvert.DeserializeObject<ResponseOrderData>(notification.NotificationText));
-            }
+                foreach (var notification in employee.NotificationData)
+                {
+                    notificationList.Add(JsonConvert.DeserializeObject<ResponseOrderData>(notification.NotificationText));
+                }
+            }            
 
             AuthorityStatisticsViewModel authorityStatistics = new AuthorityStatisticsViewModel()
             {

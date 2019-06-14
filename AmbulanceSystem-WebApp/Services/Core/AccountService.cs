@@ -37,6 +37,16 @@ namespace AmbulanceSystem_WebApp.Services.Core
             return UserData;
         }
 
+        public async Task<bool> Logout(LogoutInfoResources logoutInfoResources)
+        {
+
+            var responseMessage = await _httpClientService.SendHttpPostRequest(logoutInfoResources, "users/logout");
+
+            if (string.IsNullOrEmpty(responseMessage))
+                return false;
+
+            return true;
+        }
 
         public async Task<Boolean> ForgetPassword(string email)
         {

@@ -40,9 +40,9 @@ namespace AmbulanceSystem_WebApp.Controllers
             _recieptionistService = recieptionistService;
             try
             {
-                roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
-                hospitalId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Hospital));
-                userId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.UserId));
+                roleName = _session.GetString(SessionSettings.RoleName);
+                hospitalId = Guid.Parse(_session.GetString(SessionSettings.Hospital));
+                userId = Guid.Parse(_session.GetString(SessionSettings.UserId));
             }
             catch
             {
@@ -59,35 +59,34 @@ namespace AmbulanceSystem_WebApp.Controllers
                 {
 
                     var bedResource = await _hospitalService.GetAllBedsForHospital(hospitalId);
+                    if (bedResource == null)
+                        bedResource = new BedResource();
+
                     var patients = await _patientService.GetPatientsForHospital(hospitalId);
+                    if (patients == null)
+                        patients = new List<PatientFullData>();
+
                     var recieptionist = await _recieptionistService.GetRecieptionistFullData(userId);
+
                     List<PatientFullData> notitficationList = new List<PatientFullData>();
-                    foreach (var notification in recieptionist.NotificationData)
+
+                    if(recieptionist != null || recieptionist.NotificationData != null)
                     {
-                        notitficationList.Add(JsonConvert.DeserializeObject<PatientFullData>(notification.NotificationText));
-                    }                    
-                    if (bedResource == null || patients == null)
-                    {
-                        HospitalStatisticsViewModel ehospitalStatistics = new HospitalStatisticsViewModel()
+                        foreach (var notification in recieptionist.NotificationData)
                         {
-                            Notifications = notitficationList,
-                            AvailableBedsCount = 0,
-                            UmAvailableBedsCount = 0,
-                            PatientsCount = 0
-                        };
-                        return View(ehospitalStatistics);
+                            notitficationList.Add(JsonConvert.DeserializeObject<PatientFullData>(notification.NotificationText));
+                        }
                     }
-                    else
+
+                    HospitalStatisticsViewModel hospitalStatistics = new HospitalStatisticsViewModel()
                     {
-                        HospitalStatisticsViewModel hospitalStatistics = new HospitalStatisticsViewModel()
-                        {
-                            Notifications = notitficationList,
-                            AvailableBedsCount = bedResource.AvailableBeds.Count,
-                            UmAvailableBedsCount = bedResource.UnAvailableBeds.Count,
-                            PatientsCount = patients.Count()
-                        };
-                        return View(hospitalStatistics);
-                    }
+                        Notifications = notitficationList,
+                        AvailableBedsCount = bedResource.AvailableBeds.Count,
+                        UmAvailableBedsCount = bedResource.UnAvailableBeds.Count,
+                        PatientsCount = patients.Count()
+                    };
+                    return View(hospitalStatistics);
+                    
                 }
                 catch
                 {
@@ -292,12 +291,23 @@ namespace AmbulanceSystem_WebApp.Controllers
             try
             {
                 var bedResource = await _hospitalService.GetAllBedsForHospital(hospitalId);
+                if (bedResource == null)
+                    bedResource = new BedResource();
+
                 var patients = await _patientService.GetPatientsForHospital(hospitalId);
+                if (patients == null)
+                    patients = new List<PatientFullData>();
+
                 var recieptionist = await _recieptionistService.GetRecieptionistFullData(userId);
+
                 List<PatientFullData> notitficationList = new List<PatientFullData>();
-                foreach(var notification in recieptionist.NotificationData)
+
+                if(recieptionist != null)
                 {
-                    notitficationList.Add(JsonConvert.DeserializeObject<PatientFullData>(notification.NotificationText));
+                    foreach (var notification in recieptionist.NotificationData)
+                    {
+                        notitficationList.Add(JsonConvert.DeserializeObject<PatientFullData>(notification.NotificationText));
+                    }
                 }
 
                 HospitalStatisticsViewModel hospitalStatistics = new HospitalStatisticsViewModel()

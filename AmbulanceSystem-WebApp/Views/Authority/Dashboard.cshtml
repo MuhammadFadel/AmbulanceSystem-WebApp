@@ -77,6 +77,7 @@
         //Intialize Hub Connection
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("https://ambulancesystem.azurewebsites.net/RequestHub")
+            //.withUrl("http://localhost:1882/RequestHub")
             .build();
 
         //Get Employee Session Id to Connect To the Server
@@ -112,4 +113,3 @@
 
 </script>
 
-@*.withUrl("http://localhost:1882/RequestHub")*@
