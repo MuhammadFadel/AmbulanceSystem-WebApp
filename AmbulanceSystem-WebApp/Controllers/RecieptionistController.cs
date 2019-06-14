@@ -17,29 +17,42 @@ namespace AmbulanceSystem_WebApp.Controllers
     {
         //To Controll Session Data
         private readonly ISession _session;
+        private readonly string roleName;
+        private readonly Guid hospitalId;
+        private readonly Guid userId;
 
         private readonly IPatientService _patientService;
         private readonly IHospitalService _hospitalService;
         private readonly IReportService _reportService;
+        private readonly IRecieptionistService _recieptionistService;
+
         public RecieptionistController(
             IHttpContextAccessor httpContextAccessor,
             IPatientService patientService,
             IHospitalService hospitalService,
-            IReportService reportService
-            )
+            IReportService reportService,
+            IRecieptionistService recieptionistService)
         {
             _session = httpContextAccessor.HttpContext.Session;
             _patientService = patientService;
             _hospitalService = hospitalService;
             _reportService = reportService;
+            _recieptionistService = recieptionistService;
+            try
+            {
+                roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
+                hospitalId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Hospital));
+                userId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.UserId));
+            }
+            catch
+            {
+                RedirectToAction("Login", "Account");
+            }
         }
 
 
         public async Task<IActionResult> Dashboard()
         {
-            var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
-            var hospitalId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Hospital));
-
             if (hospitalId != null && roleName == "Hospital")
             {
                 try
@@ -47,10 +60,17 @@ namespace AmbulanceSystem_WebApp.Controllers
 
                     var bedResource = await _hospitalService.GetAllBedsForHospital(hospitalId);
                     var patients = await _patientService.GetPatientsForHospital(hospitalId);
-                    if(bedResource == null || patients == null)
+                    var recieptionist = await _recieptionistService.GetRecieptionistFullData(userId);
+                    List<PatientFullData> notitficationList = new List<PatientFullData>();
+                    foreach (var notification in recieptionist.NotificationData)
+                    {
+                        notitficationList.Add(JsonConvert.DeserializeObject<PatientFullData>(notification.NotificationText));
+                    }                    
+                    if (bedResource == null || patients == null)
                     {
                         HospitalStatisticsViewModel ehospitalStatistics = new HospitalStatisticsViewModel()
                         {
+                            Notifications = notitficationList,
                             AvailableBedsCount = 0,
                             UmAvailableBedsCount = 0,
                             PatientsCount = 0
@@ -61,29 +81,27 @@ namespace AmbulanceSystem_WebApp.Controllers
                     {
                         HospitalStatisticsViewModel hospitalStatistics = new HospitalStatisticsViewModel()
                         {
+                            Notifications = notitficationList,
                             AvailableBedsCount = bedResource.AvailableBeds.Count,
                             UmAvailableBedsCount = bedResource.UnAvailableBeds.Count,
                             PatientsCount = patients.Count()
                         };
                         return View(hospitalStatistics);
-                    }                    
+                    }
                 }
                 catch
                 {
                     ViewBag.ErrorLoadingPatients = true;
                     return RedirectToAction("Index", "Home");
                 }
-            }            
-            return RedirectToAction("Login", "Home");
+            }
+            return RedirectToAction("Login", "Account");
+
         }
 
 
         public async Task<IActionResult> CreateReport()
         {
-            var userId = Guid.Parse(_session.GetString(SessionSettings.UserId));
-            var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
-            var hospitalId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Hospital));
-
             if (hospitalId != null && roleName == "Hospital")
             {
                 try
@@ -214,9 +232,6 @@ namespace AmbulanceSystem_WebApp.Controllers
 
         public async Task<IActionResult> ViewPatients()
         {
-            var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
-            var hospitalId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Hospital));
-
             if (hospitalId != null && roleName == "Hospital")
             {
                 try
@@ -236,9 +251,6 @@ namespace AmbulanceSystem_WebApp.Controllers
         [Route("{patientId}")]
         public async Task<IActionResult> ViewPatient([FromRoute] Guid patientId)
         {
-            var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
-            var hospitalId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Hospital));
-
             if (hospitalId != null && roleName == "Hospital")
             {
                 try
@@ -281,8 +293,16 @@ namespace AmbulanceSystem_WebApp.Controllers
             {
                 var bedResource = await _hospitalService.GetAllBedsForHospital(hospitalId);
                 var patients = await _patientService.GetPatientsForHospital(hospitalId);
+                var recieptionist = await _recieptionistService.GetRecieptionistFullData(userId);
+                List<PatientFullData> notitficationList = new List<PatientFullData>();
+                foreach(var notification in recieptionist.NotificationData)
+                {
+                    notitficationList.Add(JsonConvert.DeserializeObject<PatientFullData>(notification.NotificationText));
+                }
+
                 HospitalStatisticsViewModel hospitalStatistics = new HospitalStatisticsViewModel()
                 {
+                    Notifications = notitficationList,
                     AvailableBedsCount = bedResource.AvailableBeds.Count,
                     UmAvailableBedsCount = bedResource.UnAvailableBeds.Count,
                     PatientsCount = patients.Count()

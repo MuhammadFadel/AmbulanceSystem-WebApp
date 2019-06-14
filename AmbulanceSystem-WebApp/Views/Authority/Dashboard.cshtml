@@ -48,19 +48,22 @@
         <table class="table table-resposive table-hover">
             <thead>
                 <tr>
-                    <th>Paramedic</th>
                     <th>Patient</th>
+                    <th>Paramedic</th>
                     <th>Ambulance Car</th>
                     <th>Creation Time</th>
                 </tr>
             </thead>
             <tbody id="notificationsTableBody">
-                <tr>
-                    <td><a href="">Muhammad Fadel</a></td>
-                    <td><a href="">Muhammad Walaa</a></td>
-                    <td><a href="">Abo-ElReish For Children</a></td>
-                    <td><a href="">35 Mins</a></td>
-                </tr>
+                @foreach (var notification in Model.Notifications)
+                {
+                    <tr>
+                        <td><a href="/Authority/ViewPatient/@notification.Request.Patient.Id">@notification.Request.Patient.Username</a></td>
+                        <td><a href="/Authority/ViewPatient/@notification.Paramedic.Id">@notification.Paramedic.Username</a></td>
+                        <td>@notification.Paramedic.AmbulanceCar.CarNumber</td>
+                        <td>@notification.CreationDate</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
@@ -101,7 +104,7 @@
             console.log(order);
 
             var deserializedObject = JSON.parse(order);
-            var newElement = '<tr><td><a href="/Authority/ViewParamedic/' + deserializedObject.Paramedic.Id + '">' + deserializedObject.Paramedic.Username + '</a></td><td><a href="/Authority/ViewPatient/' + deserializedObject.Request.Patient.Id + '">' + deserializedObject.Request.Patient.Username + '</a></td><td>' + deserializedObject.Paramedic.AmbulanceCar.CarNumber + '</td><td>' + deserializedObject.CreationDate + '</td></tr>';
+            var newElement = '<tr><td><a href="/Authority/ViewPatient/' + deserializedObject.Request.Patient.Id + '">' + deserializedObject.Request.Patient.Username + '</a></td><td><a href="/Authority/ViewParamedic/' + deserializedObject.Paramedic.Id + '">' + deserializedObject.Paramedic.Username + '</a></td><td>' + deserializedObject.Paramedic.AmbulanceCar.CarNumber + '</td><td>' + deserializedObject.CreationDate + '</td></tr>';
             $("#notificationsTableBody").prepend(newElement);
         }
 
