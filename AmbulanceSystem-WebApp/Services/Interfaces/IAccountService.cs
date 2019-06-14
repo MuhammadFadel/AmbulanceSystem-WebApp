@@ -13,5 +13,6 @@ namespace AmbulanceSystem_WebApp.Services.Interfaces
         Task<UserLoginReturn> Login(LoginInfoResources loginInfoResources);
         Task<Boolean> ForgetPassword(string email);
         Task<Boolean> ResetPassword(ConfirmNewPassword confirmNewPassword);
+        Task<bool> Logout(LogoutInfoResources logoutInfoResources);
     }
 }

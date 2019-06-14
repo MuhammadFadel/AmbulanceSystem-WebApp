@@ -78,7 +78,7 @@ namespace AmbulanceSystemWebApp.Controllers
                         TempData.Keep();
 
                         _session.SetString(Email, userInfo.Email);
-                        _session.SetString(UserId, recieptionistData.Id.ToString());
+                        _session.SetString(UserId, userInfo.Id.ToString());
                         _session.SetString(RoleName, userInfo.RoleName);
                         _session.SetString(Hospital, recieptionistData.HospitalData.HospitalData.Id.ToString());
 
@@ -100,7 +100,7 @@ namespace AmbulanceSystemWebApp.Controllers
                         TempData.Keep();
 
                         _session.SetString(Email, userInfo.Email);
-                        _session.SetString(UserId, authorityData.Id.ToString());
+                        _session.SetString(UserId, userInfo.Id.ToString());
                         _session.SetString(RoleName, userInfo.RoleName);
                         _session.SetString(Authority, authorityData.AuthorityFullData.Id.ToString());
 
@@ -139,9 +139,20 @@ namespace AmbulanceSystemWebApp.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            _session.Clear();
+            var userId = Guid.Parse(_session.GetString(UserId));
+            var roleName = _session.GetString(RoleName);
+
+            var connectionDeleted = await _accountService.Logout(new LogoutInfoResources
+            {
+                UserId = userId,
+                RoleName = roleName
+            });
+
+            if(connectionDeleted)
+                _session.Clear();
+            
             return RedirectToAction("Index", "Home");
         }
 

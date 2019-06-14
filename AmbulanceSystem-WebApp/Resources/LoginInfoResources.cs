@@ -17,4 +17,10 @@ namespace AmbulanceSystem_WebApp.Resources
         [DataType(DataType.Password, ErrorMessage = "Should Be Your Email Password" )]
         public string Password { get; set; }        
     }
+
+    public class LogoutInfoResources
+    {
+        public Guid UserId { get; set; }
+        public string RoleName { get; set; }
+    }
 }
