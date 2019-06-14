@@ -117,7 +117,7 @@ namespace AmbulanceSystemWebApp.Controllers
                 }
             }
             
-            catch (Exception e)
+            catch
             {
                 ViewBag.userFounded = true;
                 ViewBag.userAuthorized = false;

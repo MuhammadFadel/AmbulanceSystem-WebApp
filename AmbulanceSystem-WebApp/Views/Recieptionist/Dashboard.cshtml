@@ -58,11 +58,19 @@
                     <th>Patient</th>
                     <th>Blood Type</th>
                     <th>BirthDate</th>
-                    <th>History</th>                    
+                    <th>History</th>
                 </tr>
             </thead>
             <tbody id="notificationsTableBody">
-                
+                @foreach (var notification in Model.Notifications)
+                {
+                    <tr>
+                        <td><a href="/Recieptionist/ViewPatient/@notification.Id">@notification.User.Username</a></td>
+                        <td>@notification.BloodType</td>
+                        <td>@notification.Birthdate</td>
+                        <td>@notification.History</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>

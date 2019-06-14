@@ -13,31 +13,48 @@ using Newtonsoft.Json;
 namespace AmbulanceSystem_WebApp.Controllers
 {
     [Route("[controller]/[action]")]
+    [AmbulanceSystemWebApp.Controllers.AuthorizedUser]
     public class AuthorityController : Controller
     {
+        private readonly string roleName;
+        private readonly Guid authorityId;
+        private readonly Guid userId;
+
+
         private readonly IPatientService _patientService;
         private readonly IHttpClientService _httpClientService;
         private readonly IParamedicService _paramedicService;
         private readonly IOrderService _orderService;
+        private readonly IAuthorityService _authorityService;
 
         public AuthorityController(
             IHttpClientService httpClientService,
             IPatientService patientService,
             IParamedicService paramedicService,
-            IOrderService orderService)
+            IOrderService orderService,
+            IAuthorityService authorityService)
         {
             _orderService = orderService;
+            _authorityService = authorityService;
             _patientService = patientService;
             _httpClientService = httpClientService;
             _paramedicService = paramedicService;
+
+            try
+            {
+                roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
+                authorityId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Authority));
+                userId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.UserId));
+            }
+            catch
+            {
+                RedirectToAction("Login", "Account");
+            }
         }
 
 
         public async Task<IActionResult> Dashboard()
         {
-            var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
-            var authorityId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Authority));
-
             if (authorityId != null && roleName == "Authority")
             {
                 try
@@ -45,8 +62,17 @@ namespace AmbulanceSystem_WebApp.Controllers
 
                     var paramedics = await _paramedicService.GetAllParamedicsForAuthority(authorityId);
                     var orders = await _orderService.GetAllOrdersForAuthority(authorityId);
+                    var employee = await _authorityService.AuthorityFullData(userId);
+
+                    List<ResponseOrderData> notificationList = new List<ResponseOrderData>();
+                    foreach (var notification in employee.NotificationData)
+                    {
+                        notificationList.Add(JsonConvert.DeserializeObject<ResponseOrderData>(notification.NotificationText));
+                    }
+
                     AuthorityStatisticsViewModel authorityStatistics = new AuthorityStatisticsViewModel()
                     {
+                        Notifications = notificationList,
                         AvailableParamedicCount = paramedics.AvailableParamedics.Count(),
                         unAvailableParamedicCount = paramedics.unAvailableParamedics.Count(),
                         FailedOrders = orders.FailedOrders.Count(),
@@ -60,7 +86,7 @@ namespace AmbulanceSystem_WebApp.Controllers
                     return RedirectToAction("Index", "Home");
                 }
             }
-            return RedirectToAction("Login", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         [Route("{patientId}")]
@@ -68,9 +94,6 @@ namespace AmbulanceSystem_WebApp.Controllers
         {
             if (patientId != null)
             {
-                var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
-                var authorityId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Authority));
-
                 if (authorityId != null && roleName == "Authority")
                 {
                     try
@@ -83,7 +106,7 @@ namespace AmbulanceSystem_WebApp.Controllers
                         return RedirectToAction("Index", "Home");
                     }
                 }
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction("Login", "Account");
             }
             return RedirectToAction("Dashboard");
         }
@@ -93,9 +116,6 @@ namespace AmbulanceSystem_WebApp.Controllers
         {
             if (paramedicId != null)
             {
-                var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
-                var authorityId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Authority));
-
                 if (authorityId != null && roleName == "Authority")
                 {
                     try
@@ -116,9 +136,6 @@ namespace AmbulanceSystem_WebApp.Controllers
 
         public async Task<IActionResult> ViewParamedics()
         {
-            var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
-            var authorityId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Authority));
-
             if (authorityId != null && roleName == "Authority")
             {
                 try
@@ -136,10 +153,6 @@ namespace AmbulanceSystem_WebApp.Controllers
 
         public async Task<IActionResult> ViewOrders()
         {
-
-            var roleName = HttpContext.Session.GetString(SessionSettings.RoleName);
-            var authorityId = Guid.Parse(HttpContext.Session.GetString(SessionSettings.Authority));
-
             if (authorityId != null && roleName == "Authority")
             {
                 try
@@ -224,8 +237,17 @@ namespace AmbulanceSystem_WebApp.Controllers
         {
             var paramedics = await _paramedicService.GetAllParamedicsForAuthority(authorityId);
             var orders = await _orderService.GetAllOrdersForAuthority(authorityId);
+            var employee = await _authorityService.AuthorityFullData(userId);
+
+            List<ResponseOrderData> notificationList = new List<ResponseOrderData>();
+            foreach(var notification in employee.NotificationData)
+            {
+                notificationList.Add(JsonConvert.DeserializeObject<ResponseOrderData>(notification.NotificationText));
+            }
+
             AuthorityStatisticsViewModel authorityStatistics = new AuthorityStatisticsViewModel()
             {
+                Notifications = notificationList,
                 AvailableParamedicCount = paramedics.AvailableParamedics.Count(),
                 unAvailableParamedicCount = paramedics.unAvailableParamedics.Count(),
                 FailedOrders = orders.FailedOrders.Count(),
